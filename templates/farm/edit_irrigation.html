@@ -1,0 +1,94 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Edit Irrigation Schedule{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<h2>
+    {% if CURRENT_LANGUAGE == 'mr' %}सिंचन वेळापत्रक संपादित करा
+    {% elif CURRENT_LANGUAGE == 'hi' %}सिंचाई शेड्यूल संपादित करें
+    {% else %}Edit Irrigation Schedule{% endif %}
+</h2>
+
+<hr>
+
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Crop:</label><br>
+    <select name="crop" required>
+        {% for crop in crops %}
+        <option value="{{ crop.id }}"
+            {% if crop.id == schedule.crop_id %}selected{% endif %}>
+            {{ crop.crop_name }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <label>Irrigation Date:</label><br>
+    <input type="date" name="irrigation_date"
+           value="{{ schedule.irrigation_date|date:'Y-m-d' }}" required>
+
+    <br><br>
+
+    <label>Water Quantity:</label><br>
+    <input type="number" name="water_quantity"
+           value="{{ schedule.water_quantity }}" step="0.01" min="0.01" required>
+
+    <br><br>
+
+    <label>Water Unit:</label><br>
+    <select name="water_unit" required>
+        <option value="Liters" {% if schedule.water_unit == 'Liters' %}selected{% endif %}>Liters</option>
+        <option value="Cubic Meters" {% if schedule.water_unit == 'Cubic Meters' %}selected{% endif %}>Cubic Meters</option>
+    </select>
+
+    <br><br>
+
+    <label>Irrigation Method:</label><br>
+    <select name="irrigation_method" required>
+        {% for value, label in schedule.IRRIGATION_METHOD_CHOICES %}
+        <option value="{{ value }}" {% if schedule.irrigation_method == value %}selected{% endif %}>
+            {{ label }}
+        </option>
+        {% empty %}
+        <option value="Drip" {% if schedule.irrigation_method == 'Drip' %}selected{% endif %}>Drip Irrigation</option>
+        <option value="Sprinkler" {% if schedule.irrigation_method == 'Sprinkler' %}selected{% endif %}>Sprinkler Irrigation</option>
+        <option value="Flood" {% if schedule.irrigation_method == 'Flood' %}selected{% endif %}>Flood Irrigation</option>
+        <option value="Other" {% if schedule.irrigation_method == 'Other' %}selected{% endif %}>Other</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <label>Status:</label><br>
+    <select name="status" required>
+        <option value="Scheduled" {% if schedule.status == 'Scheduled' %}selected{% endif %}>Scheduled</option>
+        <option value="Completed" {% if schedule.status == 'Completed' %}selected{% endif %}>Completed</option>
+        <option value="Cancelled" {% if schedule.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+    </select>
+
+    <br><br>
+
+    <label>Notes:</label><br>
+    <textarea name="notes" rows="4">{{ schedule.notes }}</textarea>
+
+    <br><br>
+
+    <button type="submit">Update Schedule</button>
+</form>
+
+<br>
+
+<a href="{% url 'irrigation_dashboard' %}">Back to Dashboard</a>
+
+{% endblock %}

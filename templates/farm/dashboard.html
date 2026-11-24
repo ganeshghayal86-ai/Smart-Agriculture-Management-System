@@ -1,0 +1,325 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Smart Agriculture Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .welcome {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 8px #00000010;
+    }
+
+    .welcome h2 {
+        color: #166534;
+        margin-bottom: 10px;
+    }
+
+    .welcome p {
+        color: #666;
+        line-height: 1.6;
+    }
+
+    .header-actions {
+        margin-top: 15px;
+    }
+
+    .header-actions a {
+        display: inline-block;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        color: white;
+        margin: 5px 5px 0 0;
+    }
+
+    .profile-btn {
+        background: #2563eb;
+    }
+
+    .logout-btn {
+        background: #dc2626;
+    }
+
+    .section-title {
+        color: #166534;
+        margin: 25px 0 15px;
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px #00000010;
+        border-left: 5px solid #16a34a;
+        transition: 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px #00000018;
+    }
+
+    .card h3 {
+        color: #166534;
+        margin-bottom: 12px;
+    }
+
+    .card p {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 18px;
+        line-height: 1.6;
+    }
+
+    .card a {
+        display: inline-block;
+        background: #16a34a;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 6px;
+        text-decoration: none;
+        margin: 4px 3px 0 0;
+        font-size: 14px;
+    }
+
+    .card a:hover {
+        background: #166534;
+    }
+
+    @media(max-width: 600px) {
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div class="welcome">
+
+    {% if CURRENT_LANGUAGE == 'mr' %}
+        <h2>शेतकरी डॅशबोर्डमध्ये आपले स्वागत आहे! 🌾</h2>
+        <p>आपली पिके, आर्थिक व्यवहार, शेती साहित्य आणि शेतीविषयक कामे एकाच ठिकाणी व्यवस्थापित करा.</p>
+
+    {% elif CURRENT_LANGUAGE == 'hi' %}
+        <h2>किसान डैशबोर्ड में आपका स्वागत है! 🌾</h2>
+        <p>अपनी फसलें, वित्त, कृषि सामग्री और खेती से जुड़े काम एक ही जगह पर प्रबंधित करें।</p>
+
+    {% else %}
+        <h2>Welcome to Farmer Dashboard! 🌾</h2>
+        <p>Manage your crops, finances, inventory and farming activities from one place.</p>
+    {% endif %}
+
+    <div class="header-actions">
+
+        <a href="{% url 'user_profile' %}" class="profile-btn">
+            {% if CURRENT_LANGUAGE == 'mr' %}👤 शेतकरी प्रोफाइल
+            {% elif CURRENT_LANGUAGE == 'hi' %}👤 किसान प्रोफाइल
+            {% else %}👤 Farmer Profile{% endif %}
+        </a>
+
+        <a href="{% url 'logout' %}" class="logout-btn">
+            {% if CURRENT_LANGUAGE == 'mr' %}बाहेर पडा
+            {% elif CURRENT_LANGUAGE == 'hi' %}लॉग आउट
+            {% else %}Logout{% endif %}
+        </a>
+
+    </div>
+</div>
+
+
+{% if CURRENT_LANGUAGE == 'mr' %}
+    <h2 class="section-title">📊 व्यवस्थापन विभाग</h2>
+{% elif CURRENT_LANGUAGE == 'hi' %}
+    <h2 class="section-title">📊 प्रबंधन विभाग</h2>
+{% else %}
+    <h2 class="section-title">📊 Management Modules</h2>
+{% endif %}
+
+
+<div class="dashboard-grid">
+
+    <!-- 1. Crop Management -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>🌾 पीक व्यवस्थापन</h3>
+            <p>आपली पिके, पेरणीच्या तारखा आणि कापणीची माहिती व्यवस्थापित करा.</p>
+            <a href="{% url 'add_crop' %}">नवीन पीक जोडा</a>
+            <a href="{% url 'view_crops' %}">पिके पहा</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>🌾 फसल प्रबंधन</h3>
+            <p>अपनी फसलों, बुवाई की तारीख और कटाई की जानकारी प्रबंधित करें।</p>
+            <a href="{% url 'add_crop' %}">नई फसल जोड़ें</a>
+            <a href="{% url 'view_crops' %}">फसलें देखें</a>
+        {% else %}
+            <h3>🌾 Crop Management</h3>
+            <p>Manage your crops, sowing dates and harvest information.</p>
+            <a href="{% url 'add_crop' %}">Add New Crop</a>
+            <a href="{% url 'view_crops' %}">View Crops</a>
+        {% endif %}
+    </div>
+
+
+    <!-- 2. Finance Management -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>💰 आर्थिक व्यवस्थापन</h3>
+            <p>शेतीचे उत्पन्न, खर्च आणि आर्थिक नोंदी व्यवस्थापित करा.</p>
+            <a href="{% url 'finance_dashboard' %}">आर्थिक विभाग उघडा</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>💰 वित्त प्रबंधन</h3>
+            <p>खेती की आय, खर्च और वित्तीय रिकॉर्ड प्रबंधित करें।</p>
+            <a href="{% url 'finance_dashboard' %}">वित्त विभाग खोलें</a>
+        {% else %}
+            <h3>💰 Finance Management</h3>
+            <p>Manage farming income, expenses and financial records.</p>
+            <a href="{% url 'finance_dashboard' %}">Open Finance</a>
+        {% endif %}
+    </div>
+
+
+    <!-- 3. Inventory Management -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>📦 शेती साहित्य साठा</h3>
+            <p>बियाणे, खते, कीटकनाशके आणि इतर साहित्याचा साठा व्यवस्थापित करा.</p>
+            <a href="{% url 'inventory_dashboard' %}">साठा विभाग उघडा</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>📦 कृषि सामग्री भंडार</h3>
+            <p>बीज, उर्वरक, कीटनाशक और अन्य सामग्री का स्टॉक प्रबंधित करें।</p>
+            <a href="{% url 'inventory_dashboard' %}">भंडार खोलें</a>
+        {% else %}
+            <h3>📦 Inventory Management</h3>
+            <p>Manage seeds, fertilizers, pesticides and stock details.</p>
+            <a href="{% url 'inventory_dashboard' %}">Open Inventory</a>
+        {% endif %}
+    </div>
+
+
+    <!-- 4. AI Farming Chatbot -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>🤖 AI शेती सहाय्यक</h3>
+            <p>शेतीविषयक प्रश्न विचारा आणि कृत्रिम बुद्धिमत्तेची मदत मिळवा.</p>
+            <a href="{% url 'chatbot' %}">चॅटबॉट उघडा</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>🤖 AI कृषि सहायक</h3>
+            <p>खेती से जुड़े सवाल पूछें और AI की सहायता प्राप्त करें।</p>
+            <a href="{% url 'chatbot' %}">चैटबॉट खोलें</a>
+        {% else %}
+            <h3>🤖 AI Farming Chatbot</h3>
+            <p>Ask farming-related questions and get AI assistance.</p>
+            <a href="{% url 'chatbot' %}">Open Chatbot</a>
+        {% endif %}
+    </div>
+
+
+    <!-- 5. Crop Recommendation -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>🌱 पीक शिफारस</h3>
+            <p>शेतीसाठी योग्य पिकांची शिफारस मिळवा.</p>
+            <a href="{% url 'crop_recommendation' %}">पीक शिफारस मिळवा</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>🌱 फसल की सिफारिश</h3>
+            <p>खेती के लिए उपयुक्त फसलों की सिफारिश प्राप्त करें।</p>
+            <a href="{% url 'crop_recommendation' %}">सिफारिश प्राप्त करें</a>
+        {% else %}
+            <h3>🌱 Crop Recommendation</h3>
+            <p>Get suitable crop recommendations for farming.</p>
+            <a href="{% url 'crop_recommendation' %}">Get Recommendation</a>
+        {% endif %}
+    </div>
+
+
+    <!-- 6. Weather Information -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>🌤️ हवामान माहिती</h3>
+            <p>हवामानाची सद्यस्थिती आणि पुढील अंदाज तपासा.</p>
+            <a href="{% url 'weather' %}">हवामान तपासा</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>🌤️ मौसम की जानकारी</h3>
+            <p>मौसम की वर्तमान स्थिति और पूर्वानुमान देखें।</p>
+            <a href="{% url 'weather' %}">मौसम देखें</a>
+        {% else %}
+            <h3>🌤️ Weather Information</h3>
+            <p>Check weather conditions and forecast information.</p>
+            <a href="{% url 'weather' %}">Check Weather</a>
+        {% endif %}
+    </div>
+
+
+    <!-- 7. AI Disease Detection -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>🔬 पीक रोग ओळख</h3>
+            <p>पिकांचे रोग ओळखा आणि आधीच्या तपासणीच्या नोंदी पहा.</p>
+            <a href="{% url 'disease_detection' %}">रोग ओळखा</a>
+            <a href="{% url 'disease_history' %}">मागील नोंदी</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>🔬 फसल रोग पहचान</h3>
+            <p>फसल के रोग पहचानें और पिछली जांच के रिकॉर्ड देखें।</p>
+            <a href="{% url 'disease_detection' %}">रोग पहचानें</a>
+            <a href="{% url 'disease_history' %}">पुराने रिकॉर्ड</a>
+        {% else %}
+            <h3>🔬 AI Disease Detection</h3>
+            <p>Detect crop diseases and check previous detection records.</p>
+            <a href="{% url 'disease_detection' %}">Detect Disease</a>
+            <a href="{% url 'disease_history' %}">History</a>
+        {% endif %}
+    </div>
+
+
+    <!-- 8. Irrigation Management -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>💧 सिंचन व्यवस्थापन</h3>
+            <p>पिकांना पाणी देण्याचे नियोजन करा आणि सिंचनाच्या नोंदी व्यवस्थापित करा.</p>
+            <a href="{% url 'irrigation_dashboard' %}">सिंचन विभाग उघडा</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>💧 सिंचाई प्रबंधन</h3>
+            <p>फसलों की सिंचाई की योजना बनाएं और सिंचाई रिकॉर्ड प्रबंधित करें।</p>
+            <a href="{% url 'irrigation_dashboard' %}">सिंचाई विभाग खोलें</a>
+        {% else %}
+            <h3>💧 Irrigation Management</h3>
+            <p>Plan crop watering and manage irrigation records.</p>
+            <a href="{% url 'irrigation_dashboard' %}">Open Irrigation</a>
+        {% endif %}
+    </div>
+
+
+    <!-- 9. Soil Health Management -->
+    <div class="card">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <h3>🌱 माती आरोग्य व्यवस्थापन</h3>
+            <p>मातीची चाचणी, pH आणि पोषक घटकांची माहिती तपासा.</p>
+            <a href="{% url 'soil_dashboard' %}">माती आरोग्य विभाग उघडा</a>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <h3>🌱 मिट्टी स्वास्थ्य प्रबंधन</h3>
+            <p>मिट्टी की जांच, pH और पोषक तत्वों की जानकारी देखें।</p>
+            <a href="{% url 'soil_dashboard' %}">मिट्टी स्वास्थ्य विभाग खोलें</a>
+        {% else %}
+            <h3>🌱 Soil Health Management</h3>
+            <p>Check soil tests, pH and nutrient information.</p>
+            <a href="{% url 'soil_dashboard' %}">Open Soil Health</a>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

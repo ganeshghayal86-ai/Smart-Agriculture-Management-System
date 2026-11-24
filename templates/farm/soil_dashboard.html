@@ -1,0 +1,492 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Soil Health Dashboard{% endblock %}
+
+{% block content %}
+
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<style>
+.soil-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.soil-container > h2:first-child {
+    background: linear-gradient(135deg, #176b3a, #42a66a);
+    color: white;
+    padding: 25px;
+    border-radius: 14px;
+    font-size: 26px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.soil-container h2:not(:first-child) {
+    color: #176b3a;
+    font-size: 22px;
+    margin: 28px 0 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dcefe0;
+}
+
+.soil-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 20px;
+    margin-bottom: 28px;
+}
+
+.soil-card {
+    background: white;
+    padding: 24px;
+    border-radius: 13px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    border-left: 5px solid #42a66a;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.soil-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 7px 18px rgba(0,0,0,0.10);
+}
+
+.soil-card h3 {
+    color: #647368;
+    font-size: 15px;
+    margin-bottom: 12px;
+}
+
+.soil-card p {
+    font-size: 27px;
+    font-weight: bold;
+    color: #176b3a;
+    margin: 10px 0;
+}
+
+.npk-card {
+    border-left-color: #269653;
+    background: white;
+}
+
+.npk-card p {
+    color: #21864b;
+    font-size: 28px;
+}
+
+.npk-card span {
+    color: #718075;
+    font-size: 13px;
+}
+
+.soil-status {
+    color: #21864b !important;
+    font-size: 19px !important;
+}
+
+.soil-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.soil-buttons a {
+    background: #21864b;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    border-radius: 7px;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+.soil-buttons a:hover {
+    background: #145d32;
+}
+
+.soil-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-top: 15px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+
+.soil-table th,
+.soil-table td {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #edf0ed;
+}
+
+.soil-table th {
+    background: #21864b;
+    color: white;
+    font-size: 14px;
+}
+
+.soil-table td {
+    font-size: 14px;
+}
+
+.soil-table tr:nth-child(even) {
+    background: #f4faf5;
+}
+
+.soil-table tr:hover {
+    background: #e8f5eb;
+}
+
+/* Action Buttons */
+.action-btn {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 3px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.view-btn {
+    background: #21864b;
+}
+
+.view-btn:hover {
+    background: #145d32;
+    color: white;
+}
+
+.download-btn {
+    background: #2879c7;
+}
+
+.download-btn:hover {
+    background: #17528b;
+    color: white;
+}
+
+.soil-empty {
+    background: #fff8e1;
+    padding: 20px;
+    border-radius: 9px;
+    color: #795b13;
+    margin-top: 15px;
+}
+
+.npk-note {
+    background: #e8f5eb;
+    padding: 17px;
+    border-radius: 9px;
+    margin-bottom: 28px;
+    color: #176b3a;
+    border-left: 4px solid #42a66a;
+    line-height: 1.6;
+}
+
+@media (max-width: 650px) {
+    .soil-container {
+        padding: 12px;
+        margin: 15px auto;
+    }
+
+    .soil-container > h2:first-child {
+        font-size: 21px;
+        padding: 20px;
+    }
+
+    .soil-container h2:not(:first-child) {
+        font-size: 19px;
+    }
+
+    .soil-card {
+        padding: 18px;
+    }
+
+    .soil-table {
+        min-width: 900px;
+        font-size: 12px;
+    }
+
+    .soil-table th,
+    .soil-table td {
+        padding: 9px;
+    }
+
+    .soil-buttons a {
+        width: 100%;
+        text-align: center;
+    }
+}
+</style>
+
+<div class="soil-container">
+
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            माती आरोग्य डॅशबोर्ड
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            मिट्टी स्वास्थ्य डैशबोर्ड
+        {% else %}
+            Soil Health Dashboard
+        {% endif %}
+    </h2>
+
+    <!-- Navigation Buttons -->
+    <div class="soil-buttons">
+
+        <a href="{% url 'add_soil_test' %}">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                + नवीन माती परीक्षण जोडा
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                + नया मिट्टी परीक्षण जोड़ें
+            {% else %}
+                + Add Soil Test
+            {% endif %}
+        </a>
+
+        <a href="{% url 'dashboard' %}">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                मुख्य डॅशबोर्ड
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                मुख्य डैशबोर्ड
+            {% else %}
+                Main Dashboard
+            {% endif %}
+        </a>
+
+    </div>
+
+    <!-- Soil Summary -->
+    <div class="soil-cards">
+
+        <div class="soil-card">
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}एकूण माती परीक्षण
+                {% elif CURRENT_LANGUAGE == 'hi' %}कुल मिट्टी परीक्षण
+                {% else %}Total Soil Tests{% endif %}
+            </h3>
+            <p>{{ total_tests }}</p>
+        </div>
+
+        <div class="soil-card">
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}सरासरी माती pH
+                {% elif CURRENT_LANGUAGE == 'hi' %}औसत मिट्टी pH
+                {% else %}Average Soil pH{% endif %}
+            </h3>
+            <p>
+                {% if average_ph != None %}
+                    {{ average_ph }}
+                {% else %}
+                    --
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="soil-card">
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}मातीची स्थिती
+                {% elif CURRENT_LANGUAGE == 'hi' %}मिट्टी की स्थिति
+                {% else %}Soil Condition{% endif %}
+            </h3>
+
+            <p class="soil-status">
+                {% if ph_status %}
+                    {% if CURRENT_LANGUAGE == 'mr' %}
+                        {% if ph_status == 'Acidic Soil' %}आम्लयुक्त माती
+                        {% elif ph_status == 'Neutral Soil' %}तटस्थ माती
+                        {% else %}अल्कधर्मी माती{% endif %}
+                    {% elif CURRENT_LANGUAGE == 'hi' %}
+                        {% if ph_status == 'Acidic Soil' %}अम्लीय मिट्टी
+                        {% elif ph_status == 'Neutral Soil' %}तटस्थ मिट्टी
+                        {% else %}क्षारीय मिट्टी{% endif %}
+                    {% else %}
+                        {{ ph_status }}
+                    {% endif %}
+                {% else %}
+                    --
+                {% endif %}
+            </p>
+        </div>
+
+        <div class="soil-card">
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}शेवटचे परीक्षण
+                {% elif CURRENT_LANGUAGE == 'hi' %}अंतिम परीक्षण
+                {% else %}Latest Test Date{% endif %}
+            </h3>
+            <p>
+                {% if latest_test %}
+                    {{ latest_test.test_date|date:"d-m-Y" }}
+                {% else %}
+                    --
+                {% endif %}
+            </p>
+        </div>
+
+    </div>
+
+    <!-- NPK Analysis -->
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            NPK पोषक तत्व विश्लेषण
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            NPK पोषक तत्व विश्लेषण
+        {% else %}
+            NPK Nutrient Analysis
+        {% endif %}
+    </h2>
+
+    <div class="soil-cards">
+
+        <div class="soil-card npk-card">
+            <h3>Nitrogen (N)</h3>
+            <p>
+                {% if nitrogen != None %}{{ nitrogen }}{% else %}--{% endif %}
+            </p>
+            <span>
+                {% if CURRENT_LANGUAGE == 'mr' %}नायट्रोजन
+                {% elif CURRENT_LANGUAGE == 'hi' %}नाइट्रोजन
+                {% else %}Nitrogen Level{% endif %}
+            </span>
+        </div>
+
+        <div class="soil-card npk-card">
+            <h3>Phosphorus (P)</h3>
+            <p>
+                {% if phosphorus != None %}{{ phosphorus }}{% else %}--{% endif %}
+            </p>
+            <span>
+                {% if CURRENT_LANGUAGE == 'mr' %}फॉस्फरस
+                {% elif CURRENT_LANGUAGE == 'hi' %}फॉस्फोरस
+                {% else %}Phosphorus Level{% endif %}
+            </span>
+        </div>
+
+        <div class="soil-card npk-card">
+            <h3>Potassium (K)</h3>
+            <p>
+                {% if potassium != None %}{{ potassium }}{% else %}--{% endif %}
+            </p>
+            <span>
+                {% if CURRENT_LANGUAGE == 'mr' %}पालाश
+                {% elif CURRENT_LANGUAGE == 'hi' %}पोटैशियम
+                {% else %}Potassium Level{% endif %}
+            </span>
+        </div>
+
+    </div>
+
+    <!-- NPK Note -->
+    <div class="npk-note">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            वरील NPK मूल्ये शेवटच्या माती परीक्षण अहवालातून घेतली आहेत. त्यांचे युनिट तुमच्या माती परीक्षण अहवालाप्रमाणे आहे.
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            ऊपर दिए गए NPK मान अंतिम मिट्टी परीक्षण रिपोर्ट से लिए गए हैं। उनकी इकाई आपकी मिट्टी परीक्षण रिपोर्ट के अनुसार है।
+        {% else %}
+            NPK values are taken from your latest soil test report. Units are the same as those in your laboratory report.
+        {% endif %}
+    </div>
+
+    <!-- Soil Test History -->
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}माती परीक्षण इतिहास
+        {% elif CURRENT_LANGUAGE == 'hi' %}मिट्टी परीक्षण इतिहास
+        {% else %}Soil Test History{% endif %}
+    </h2>
+
+    {% if tests %}
+
+    <div style="overflow-x:auto;">
+
+        <table class="soil-table">
+
+            <thead>
+                <tr>
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}दिनांक
+                        {% elif CURRENT_LANGUAGE == 'hi' %}तारीख
+                        {% else %}Date{% endif %}
+                    </th>
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}मातीचा प्रकार
+                        {% elif CURRENT_LANGUAGE == 'hi' %}मिट्टी का प्रकार
+                        {% else %}Soil Type{% endif %}
+                    </th>
+                    <th>pH</th>
+                    <th>N</th>
+                    <th>P</th>
+                    <th>K</th>
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}ठिकाण
+                        {% elif CURRENT_LANGUAGE == 'hi' %}स्थान
+                        {% else %}Location{% endif %}
+                    </th>
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}कृती
+                        {% elif CURRENT_LANGUAGE == 'hi' %}कार्य
+                        {% else %}Action{% endif %}
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for test in tests %}
+                <tr>
+                    <td>{{ test.test_date|date:"d-m-Y" }}</td>
+                    <td>{{ test.soil_type }}</td>
+                    <td>{{ test.soil_ph }}</td>
+                    <td>{{ test.nitrogen }}</td>
+                    <td>{{ test.phosphorus }}</td>
+                    <td>{{ test.potassium }}</td>
+                    <td>{{ test.location|default:"-" }}</td>
+
+                    <td>
+                        <a href="{% url 'soil_test_detail' test.id %}"
+                           class="action-btn view-btn">
+                            {% if CURRENT_LANGUAGE == 'mr' %}पहा
+                            {% elif CURRENT_LANGUAGE == 'hi' %}देखें
+                            {% else %}View Details{% endif %}
+                        </a>
+
+                        <a href="{% url 'download_soil_test_pdf' test.id %}"
+                           class="action-btn download-btn">
+                            {% if CURRENT_LANGUAGE == 'mr' %}PDF डाउनलोड
+                            {% elif CURRENT_LANGUAGE == 'hi' %}PDF डाउनलोड
+                            {% else %}Download PDF{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+        <div class="soil-empty">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                अजून कोणतेही माती परीक्षण उपलब्ध नाही.
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                अभी कोई मिट्टी परीक्षण उपलब्ध नहीं है।
+            {% else %}
+                No soil test records available.
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

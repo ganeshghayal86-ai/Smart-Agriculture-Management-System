@@ -1,0 +1,30 @@
+
+{% load i18n %}
+
+<form action="{% url 'set_language' %}" method="post">
+    {% csrf_token %}
+
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+    <label for="language">🌐 भाषा निवडा:</label>
+
+    <select name="language" id="language"
+            onchange="this.form.submit()"
+            style="padding:10px; border-radius:6px; margin:5px;">
+
+        {% get_current_language as CURRENT_LANGUAGE %}
+
+        <option value="mr" {% if CURRENT_LANGUAGE == 'mr' %}selected{% endif %}>
+            🇮🇳 मराठी
+        </option>
+
+        <option value="en" {% if CURRENT_LANGUAGE == 'en' %}selected{% endif %}>
+            🇬🇧 English
+        </option>
+
+        <option value="hi" {% if CURRENT_LANGUAGE == 'hi' %}selected{% endif %}>
+            🇮🇳 हिंदी
+        </option>
+
+    </select>
+</form>

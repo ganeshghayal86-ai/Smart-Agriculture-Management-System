@@ -1,0 +1,107 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+.finance-container {
+    max-width: 650px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+}
+
+.finance-container h2 {
+    text-align: center;
+    color: #166534;
+    margin-bottom: 25px;
+}
+
+.finance-container label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+.finance-container input,
+.finance-container select,
+.finance-container textarea {
+    width: 100%;
+    padding: 11px;
+    margin-top: 7px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    box-sizing: border-box;
+}
+
+.update-btn {
+    width: 100%;
+    margin-top: 25px;
+    padding: 12px;
+    background: #15803d;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #166534;
+    text-decoration: none;
+}
+</style>
+
+<div class="finance-container">
+
+    <h2>✏️ Edit Transaction</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Transaction Type</label>
+        <select name="transaction_type" required>
+            <option value="Income"
+                {% if transaction.transaction_type == 'Income' %}selected{% endif %}>
+                Income
+            </option>
+
+            <option value="Expense"
+                {% if transaction.transaction_type == 'Expense' %}selected{% endif %}>
+                Expense
+            </option>
+        </select>
+
+        <label>Title</label>
+        <input type="text" name="title"
+               value="{{ transaction.title }}" required>
+
+        <label>Amount</label>
+        <input type="number" name="amount"
+               value="{{ transaction.amount }}"
+               step="0.01" min="0.01" required>
+
+        <label>Date</label>
+        <input type="date" name="date"
+               value="{{ transaction.date|date:'Y-m-d' }}" required>
+
+        <label>Description</label>
+        <textarea name="description" rows="4">{{ transaction.description }}</textarea>
+
+        <button type="submit" class="update-btn">
+            Update Transaction
+        </button>
+
+        <a href="{% url 'finance_dashboard' %}" class="cancel-btn">
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

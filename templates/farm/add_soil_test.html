@@ -1,0 +1,194 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Add Soil Test{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<style>
+    .soil-form-container {
+        max-width: 750px;
+        margin: 30px auto;
+        padding: 25px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    .soil-form-container h2 {
+        color: #2e7d32;
+        margin-bottom: 20px;
+    }
+
+    .soil-field {
+        margin-bottom: 16px;
+    }
+
+    .soil-field label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 7px;
+    }
+
+    .soil-field input,
+    .soil-field select,
+    .soil-field textarea {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+    }
+
+    .soil-submit {
+        background: #2e7d32;
+        color: white;
+        border: none;
+        padding: 12px 22px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .soil-back {
+        display: inline-block;
+        margin-left: 10px;
+        color: #2e7d32;
+        text-decoration: none;
+    }
+
+    .soil-error {
+        background: #ffebee;
+        color: #b71c1c;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+    }
+
+    .soil-note {
+        background: #fff8e1;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 18px;
+        color: #795548;
+    }
+</style>
+
+<div class="soil-form-container">
+
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            🌱 नवीन माती चाचणी नोंदवा
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            🌱 नई मिट्टी जांच दर्ज करें
+        {% else %}
+            🌱 Add New Soil Test
+        {% endif %}
+    </h2>
+
+    {% if error %}
+        <div class="soil-error">{{ error }}</div>
+    {% endif %}
+
+    <div class="soil-note">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            टीप: NPK मूल्ये तुमच्या माती परीक्षण अहवालातील त्याच मापन एककात भरा.
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            नोट: NPK मान अपनी मिट्टी जांच रिपोर्ट की उसी मापन इकाई में भरें।
+        {% else %}
+            Note: Enter NPK values using the same units shown in your soil laboratory report.
+        {% endif %}
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="soil-field">
+            <label>
+                {% if CURRENT_LANGUAGE == 'mr' %}चाचणी तारीख
+                {% elif CURRENT_LANGUAGE == 'hi' %}जांच की तारीख
+                {% else %}Test Date{% endif %}
+            </label>
+            <input type="date" name="test_date" required>
+        </div>
+
+        <div class="soil-field">
+            <label>
+                {% if CURRENT_LANGUAGE == 'mr' %}मातीचा प्रकार
+                {% elif CURRENT_LANGUAGE == 'hi' %}मिट्टी का प्रकार
+                {% else %}Soil Type{% endif %}
+            </label>
+
+            <select name="soil_type" required>
+                <option value="">Select Soil Type</option>
+                <option value="Black">Black Soil</option>
+                <option value="Red">Red Soil</option>
+                <option value="Sandy">Sandy Soil</option>
+                <option value="Loamy">Loamy Soil</option>
+                <option value="Clay">Clay Soil</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="soil-field">
+            <label>Soil pH (0 - 14)</label>
+            <input type="number" name="soil_ph"
+                   min="0" max="14" step="0.01" required>
+        </div>
+
+        <div class="soil-field">
+            <label>Nitrogen (N)</label>
+            <input type="number" name="nitrogen"
+                   min="0" step="0.01" required>
+        </div>
+
+        <div class="soil-field">
+            <label>Phosphorus (P)</label>
+            <input type="number" name="phosphorus"
+                   min="0" step="0.01" required>
+        </div>
+
+        <div class="soil-field">
+            <label>Potassium (K)</label>
+            <input type="number" name="potassium"
+                   min="0" step="0.01" required>
+        </div>
+
+        <div class="soil-field">
+            <label>
+                {% if CURRENT_LANGUAGE == 'mr' %}शेताचे ठिकाण
+                {% elif CURRENT_LANGUAGE == 'hi' %}खेत का स्थान
+                {% else %}Farm Location{% endif %}
+            </label>
+            <input type="text" name="location"
+                   placeholder="Village / Taluka / District">
+        </div>
+
+        <div class="soil-field">
+            <label>
+                {% if CURRENT_LANGUAGE == 'mr' %}अतिरिक्त माहिती
+                {% elif CURRENT_LANGUAGE == 'hi' %}अतिरिक्त जानकारी
+                {% else %}Additional Notes{% endif %}
+            </label>
+            <textarea name="notes" rows="4"></textarea>
+        </div>
+
+        <button type="submit" class="soil-submit">
+            {% if CURRENT_LANGUAGE == 'mr' %}चाचणी जतन करा
+            {% elif CURRENT_LANGUAGE == 'hi' %}जांच सेव करें
+            {% else %}Save Soil Test{% endif %}
+        </button>
+
+        <a href="{% url 'soil_dashboard' %}" class="soil-back">
+            {% if CURRENT_LANGUAGE == 'mr' %}मागे जा
+            {% elif CURRENT_LANGUAGE == 'hi' %}वापस जाएं
+            {% else %}Back{% endif %}
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

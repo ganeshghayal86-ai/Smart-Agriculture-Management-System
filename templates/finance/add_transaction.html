@@ -1,0 +1,144 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Add Income / Expense{% endblock %}
+
+{% block content %}
+
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div style="max-width:650px; margin:auto; background:white; padding:30px; border-radius:12px; box-shadow:0 3px 12px #0002;">
+
+    {% if CURRENT_LANGUAGE == 'mr' %}
+        <h2>💰 उत्पन्न / खर्च जोडा</h2>
+        <p>तुमच्या शेतीचे उत्पन्न किंवा खर्च नोंदवा.</p>
+    {% elif CURRENT_LANGUAGE == 'hi' %}
+        <h2>💰 आय / खर्च जोड़ें</h2>
+        <p>अपनी खेती की आय या खर्च दर्ज करें।</p>
+    {% else %}
+        <h2>💰 Add Income / Expense</h2>
+        <p>Record your farming income or expenses.</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div style="margin-bottom:18px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>व्यवहाराचा प्रकार:</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>लेन-देन का प्रकार:</label>
+            {% else %}
+                <label>Transaction Type:</label>
+            {% endif %}
+
+            <select name="transaction_type" required
+                    style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;">
+
+                <option value="">
+                    {% if CURRENT_LANGUAGE == 'mr' %}प्रकार निवडा
+                    {% elif CURRENT_LANGUAGE == 'hi' %}प्रकार चुनें
+                    {% else %}Select Type{% endif %}
+                </option>
+
+                <option value="Income">
+                    {% if CURRENT_LANGUAGE == 'mr' %}उत्पन्न
+                    {% elif CURRENT_LANGUAGE == 'hi' %}आय
+                    {% else %}Income{% endif %}
+                </option>
+
+                <option value="Expense">
+                    {% if CURRENT_LANGUAGE == 'mr' %}खर्च
+                    {% elif CURRENT_LANGUAGE == 'hi' %}खर्च
+                    {% else %}Expense{% endif %}
+                </option>
+
+            </select>
+        </div>
+
+        <div style="margin-bottom:18px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>शीर्षक:</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>शीर्षक:</label>
+            {% else %}
+                <label>Title:</label>
+            {% endif %}
+
+            <input type="text" name="title" required
+                   style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <div style="margin-bottom:18px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>रक्कम (₹):</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>राशि (₹):</label>
+            {% else %}
+                <label>Amount (₹):</label>
+            {% endif %}
+
+            <input type="number" name="amount" step="0.01" required
+                   style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <div style="margin-bottom:18px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>तारीख:</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>तारीख:</label>
+            {% else %}
+                <label>Date:</label>
+            {% endif %}
+
+            <input type="date" name="date" required
+                   style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <div style="margin-bottom:22px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>वर्णन:</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>विवरण:</label>
+            {% else %}
+                <label>Description:</label>
+            {% endif %}
+
+            <textarea name="description" rows="4"
+                      style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;"></textarea>
+        </div>
+
+        <button type="submit"
+                style="background:#166534; color:white; padding:12px 25px; border:none; border-radius:6px; cursor:pointer;">
+
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                व्यवहार जतन करा
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                लेन-देन सेव करें
+            {% else %}
+                Save Transaction
+            {% endif %}
+
+        </button>
+
+    </form>
+
+    <br><br>
+
+    <a href="{% url 'finance_dashboard' %}"
+       style="color:#166534; text-decoration:none;">
+
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            ← आर्थिक डॅशबोर्डवर परत जा
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            ← वित्त डैशबोर्ड पर वापस जाएं
+        {% else %}
+            ← Back to Finance Dashboard
+        {% endif %}
+
+    </a>
+
+</div>
+
+{% endblock %}

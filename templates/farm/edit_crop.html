@@ -1,0 +1,115 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Edit Crop{% endblock %}
+
+{% block content %}
+
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div style="max-width:650px; margin:auto; background:white; padding:30px; border-radius:12px; box-shadow:0 3px 12px #0002;">
+
+    {% if CURRENT_LANGUAGE == 'mr' %}
+        <h2>🌾 पिकाची माहिती संपादित करा</h2>
+        <p>तुमच्या पिकाची माहिती अपडेट करा.</p>
+    {% elif CURRENT_LANGUAGE == 'hi' %}
+        <h2>🌾 फसल की जानकारी संपादित करें</h2>
+        <p>अपनी फसल की जानकारी अपडेट करें।</p>
+    {% else %}
+        <h2>🌾 Edit Crop Details</h2>
+        <p>Update your crop information.</p>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div style="margin-bottom:18px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>पिकाचे नाव:</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>फसल का नाम:</label>
+            {% else %}
+                <label>Crop Name:</label>
+            {% endif %}
+
+            <input type="text" name="crop_name"
+                   value="{{ crop.crop_name }}" required
+                   style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <div style="margin-bottom:18px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>क्षेत्रफळ (एकरमध्ये):</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>क्षेत्रफल (एकड़ में):</label>
+            {% else %}
+                <label>Area (in acres):</label>
+            {% endif %}
+
+            <input type="number" name="area"
+                   value="{{ crop.area }}" step="0.01" required
+                   style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <div style="margin-bottom:18px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>पेरणीची तारीख:</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>बुवाई की तारीख:</label>
+            {% else %}
+                <label>Sowing Date:</label>
+            {% endif %}
+
+            <input type="date" name="sowing_date"
+                   value="{{ crop.sowing_date|date:'Y-m-d' }}" required
+                   style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <div style="margin-bottom:22px;">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <label>अपेक्षित कापणीची तारीख:</label>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <label>अनुमानित कटाई की तारीख:</label>
+            {% else %}
+                <label>Expected Harvest Date:</label>
+            {% endif %}
+
+            <input type="date" name="expected_harvest_date"
+                   value="{{ crop.expected_harvest_date|date:'Y-m-d' }}" required
+                   style="width:100%; padding:12px; margin-top:7px; border:1px solid #ccc; border-radius:6px;">
+        </div>
+
+        <button type="submit"
+                style="background:#166534; color:white; padding:12px 25px; border:none; border-radius:6px; cursor:pointer;">
+
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                पीक अपडेट करा
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                फसल अपडेट करें
+            {% else %}
+                Update Crop
+            {% endif %}
+
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'view_crops' %}"
+       style="color:#166534; text-decoration:none;">
+
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            ← पिकांच्या यादीत परत जा
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            ← फसल सूची पर वापस जाएं
+        {% else %}
+            ← Back to Crops
+        {% endif %}
+
+    </a>
+
+</div>
+
+{% endblock %}

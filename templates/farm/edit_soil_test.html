@@ -1,0 +1,222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Soil Test Report | Smart Agriculture</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f7f2;
+            color: #26352b;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #176b3a, #42a66a);
+            color: white;
+            padding: 28px;
+            border-radius: 14px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #e4f5e9;
+        }
+
+        .form-card {
+            background: white;
+            padding: 30px;
+            border-radius: 13px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .form-card h2 {
+            color: #176b3a;
+            margin-bottom: 22px;
+            font-size: 21px;
+        }
+
+        .form-group {
+            margin-bottom: 19px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #405447;
+            font-size: 14px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccd8ce;
+            border-radius: 7px;
+            outline: none;
+            font-size: 15px;
+            background: #fcfefc;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #269653;
+            box-shadow: 0 0 0 3px rgba(38,150,83,0.10);
+        }
+
+        textarea {
+            resize: vertical;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .update-btn {
+            background: #21864b;
+            color: white;
+        }
+
+        .update-btn:hover {
+            background: #145d32;
+        }
+
+        .cancel-btn {
+            background: #e9efea;
+            color: #405447;
+        }
+
+        .cancel-btn:hover {
+            background: #dce6de;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>✏️ Edit Soil Test Report</h1>
+        <p>Update your soil testing information.</p>
+    </div>
+
+    <div class="form-card">
+
+        <h2>Soil Test Information</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Test Date</label>
+                <input type="date" name="test_date"
+                       value="{{ test.test_date|date:'Y-m-d' }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Soil Type</label>
+                <input type="text" name="soil_type"
+                       value="{{ test.soil_type }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Soil pH</label>
+                <input type="number" name="soil_ph"
+                       step="0.01" value="{{ test.soil_ph }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Nitrogen (N)</label>
+                <input type="number" name="nitrogen"
+                       step="0.01" value="{{ test.nitrogen }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Phosphorus (P)</label>
+                <input type="number" name="phosphorus"
+                       step="0.01" value="{{ test.phosphorus }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Potassium (K)</label>
+                <input type="number" name="potassium"
+                       step="0.01" value="{{ test.potassium }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" name="location"
+                       value="{{ test.location }}">
+            </div>
+
+            <div class="form-group">
+                <label>Additional Notes</label>
+                <textarea name="notes" rows="4">{{ test.notes }}</textarea>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn update-btn">
+                    ✓ Update Report
+                </button>
+
+                <a href="{% url 'soil_test_detail' test.id %}"
+                   class="btn cancel-btn">
+                    Cancel
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

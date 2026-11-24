@@ -1,0 +1,276 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Finance Dashboard{% endblock %}
+
+{% block content %}
+
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<style>
+.finance-wrapper {
+    background: white;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 3px 15px #0002;
+}
+
+.finance-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.finance-card {
+    flex: 1;
+    min-width: 180px;
+    padding: 22px;
+    border-radius: 12px;
+}
+
+.income-card { background: #dcfce7; }
+.expense-card { background: #fee2e2; }
+.profit-card { background: #dbeafe; }
+
+.finance-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+    min-width: 850px;
+}
+
+.finance-table th {
+    background: #166534;
+    color: white;
+    padding: 13px;
+}
+
+.finance-table td {
+    padding: 13px;
+    border-bottom: 1px solid #ddd;
+}
+
+.finance-table tr:hover {
+    background: #f0fdf4;
+}
+
+.edit-btn, .delete-btn {
+    display: inline-block;
+    padding: 7px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: white;
+    margin: 3px;
+    font-size: 13px;
+}
+
+.edit-btn { background: #2563eb; }
+.delete-btn { background: #dc2626; }
+
+.add-btn {
+    display: inline-block;
+    background: #166534;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 7px;
+    text-decoration: none;
+}
+
+.back-btn {
+    display: inline-block;
+    background: #475569;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+@media(max-width:600px) {
+    .finance-wrapper { padding: 15px; }
+    .finance-card { min-width: 100%; }
+}
+</style>
+
+<div class="finance-wrapper">
+
+    {% if CURRENT_LANGUAGE == 'mr' %}
+        <h2>💰 आर्थिक व्यवस्थापन डॅशबोर्ड</h2>
+        <p>तुमच्या शेतीचे उत्पन्न आणि खर्च व्यवस्थापित करा.</p>
+    {% elif CURRENT_LANGUAGE == 'hi' %}
+        <h2>💰 वित्त प्रबंधन डैशबोर्ड</h2>
+        <p>अपनी खेती की आय और खर्च का प्रबंधन करें।</p>
+    {% else %}
+        <h2>💰 Finance Management Dashboard</h2>
+        <p>Manage your farming income and expenses.</p>
+    {% endif %}
+
+    <hr>
+
+    <div class="finance-cards">
+
+        <div class="finance-card income-card">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <h3>एकूण उत्पन्न</h3>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <h3>कुल आय</h3>
+            {% else %}
+                <h3>Total Income</h3>
+            {% endif %}
+            <h2>₹{{ total_income }}</h2>
+        </div>
+
+        <div class="finance-card expense-card">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <h3>एकूण खर्च</h3>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <h3>कुल खर्च</h3>
+            {% else %}
+                <h3>Total Expense</h3>
+            {% endif %}
+            <h2>₹{{ total_expense }}</h2>
+        </div>
+
+        <div class="finance-card profit-card">
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                <h3>नफा / तोटा</h3>
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                <h3>लाभ / हानि</h3>
+            {% else %}
+                <h3>Profit / Loss</h3>
+            {% endif %}
+            <h2>₹{{ profit }}</h2>
+        </div>
+
+    </div>
+
+    <a href="{% url 'add_transaction' %}" class="add-btn">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            + उत्पन्न / खर्च जोडा
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            + आय / खर्च जोड़ें
+        {% else %}
+            + Add Income / Expense
+        {% endif %}
+    </a>
+
+    <hr style="margin:25px 0;">
+
+    {% if CURRENT_LANGUAGE == 'mr' %}
+        <h2>सर्व व्यवहार</h2>
+    {% elif CURRENT_LANGUAGE == 'hi' %}
+        <h2>सभी लेन-देन</h2>
+    {% else %}
+        <h2>All Transactions</h2>
+    {% endif %}
+
+    {% if transactions %}
+
+    <div style="overflow-x:auto;">
+
+        <table class="finance-table">
+
+            <tr>
+                <th>
+                    {% if CURRENT_LANGUAGE == 'mr' %}प्रकार
+                    {% elif CURRENT_LANGUAGE == 'hi' %}प्रकार
+                    {% else %}Type{% endif %}
+                </th>
+
+                <th>
+                    {% if CURRENT_LANGUAGE == 'mr' %}शीर्षक
+                    {% elif CURRENT_LANGUAGE == 'hi' %}शीर्षक
+                    {% else %}Title{% endif %}
+                </th>
+
+                <th>
+                    {% if CURRENT_LANGUAGE == 'mr' %}रक्कम
+                    {% elif CURRENT_LANGUAGE == 'hi' %}राशि
+                    {% else %}Amount{% endif %}
+                </th>
+
+                <th>
+                    {% if CURRENT_LANGUAGE == 'mr' %}तारीख
+                    {% elif CURRENT_LANGUAGE == 'hi' %}तारीख
+                    {% else %}Date{% endif %}
+                </th>
+
+                <th>
+                    {% if CURRENT_LANGUAGE == 'mr' %}वर्णन
+                    {% elif CURRENT_LANGUAGE == 'hi' %}विवरण
+                    {% else %}Description{% endif %}
+                </th>
+
+                <th>
+                    {% if CURRENT_LANGUAGE == 'mr' %}कृती
+                    {% elif CURRENT_LANGUAGE == 'hi' %}कार्य
+                    {% else %}Actions{% endif %}
+                </th>
+            </tr>
+
+            {% for transaction in transactions %}
+
+            <tr>
+
+                <td>{{ transaction.transaction_type }}</td>
+
+                <td>{{ transaction.title }}</td>
+
+                <td>₹{{ transaction.amount }}</td>
+
+                <td>{{ transaction.date }}</td>
+
+                <td>{{ transaction.description|default:"-" }}</td>
+
+                <td>
+                    <a href="{% url 'edit_transaction' transaction.id %}"
+                       class="edit-btn">
+                        {% if CURRENT_LANGUAGE == 'mr' %}बदला
+                        {% elif CURRENT_LANGUAGE == 'hi' %}संपादित करें
+                        {% else %}Edit{% endif %}
+                    </a>
+
+                    <a href="{% url 'delete_transaction' transaction.id %}"
+                       class="delete-btn">
+                        {% if CURRENT_LANGUAGE == 'mr' %}हटवा
+                        {% elif CURRENT_LANGUAGE == 'hi' %}हटाएं
+                        {% else %}Delete{% endif %}
+                    </a>
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </table>
+
+    </div>
+
+    {% else %}
+
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            <p>अद्याप कोणतेही व्यवहार उपलब्ध नाहीत.</p>
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            <p>अभी कोई लेन-देन उपलब्ध नहीं है।</p>
+        {% else %}
+            <p>No transactions available.</p>
+        {% endif %}
+
+    {% endif %}
+
+    <br><br>
+
+    <a href="{% url 'dashboard' %}" class="back-btn">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            मुख्य डॅशबोर्डवर जा
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            मुख्य डैशबोर्ड पर जाएं
+        {% else %}
+            Back to Main Dashboard
+        {% endif %}
+    </a>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crop Disease Detection</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f1f8e9;
+            padding: 30px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        h2 {
+            color: green;
+            text-align: center;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            box-sizing: border-box;
+        }
+        button {
+            background: green;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .success {
+            color: green;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🌱 Crop Disease Detection</h2>
+
+    {% if success %}
+        <div class="success">
+            <h3>🌱 AI Disease Analysis Result</h3>
+            <p><strong>Image uploaded successfully!</strong></p>
+            <div style="background:#f1f8e9; padding:15px; border-radius:8px;">
+                <h3>🌍 AI Disease Analysis – Three Languages</h3>
+                <div style="white-space: pre-line;">
+                    {{ disease_result }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label>Crop Name</label>
+        <input type="text" name="crop_name"
+               placeholder="Enter crop name" required>
+
+        <label>Upload Leaf Image</label>
+        <input type="file" name="leaf_image"
+               accept="image/*" required>
+
+        <button type="submit">Upload Image</button>
+    </form>
+</div>
+
+</body>
+</html>

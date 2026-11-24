@@ -1,0 +1,83 @@
+
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Smart Agriculture Management System{% endblock %}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f0f8f0;
+            color: #263b2b;
+        }
+
+        header {
+            background: #166534;
+            color: white;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        .language-box {
+            background: white;
+            color: #222;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 25px auto;
+            padding: 20px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 18px;
+            color: #64748b;
+        }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <header>
+        <h2>🌱 Smart Agriculture</h2>
+
+        <div class="language-box">
+            {% include 'includes/language_switcher.html' %}
+        </div>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        Smart Agriculture Management System © 2026
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+
+</body>
+</html>

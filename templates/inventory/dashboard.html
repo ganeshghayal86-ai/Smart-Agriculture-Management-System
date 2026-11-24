@@ -1,0 +1,162 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Inventory Dashboard{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<h2>
+    {% if CURRENT_LANGUAGE == 'mr' %}साठा व्यवस्थापन डॅशबोर्ड
+    {% elif CURRENT_LANGUAGE == 'hi' %}इन्वेंटरी डैशबोर्ड
+    {% else %}Inventory Management Dashboard{% endif %}
+</h2>
+
+<hr>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}एकूण वस्तू
+    {% elif CURRENT_LANGUAGE == 'hi' %}कुल सामान
+    {% else %}Total Inventory Items{% endif %}
+    : {{ total_items }}
+</h3>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}एकूण साठ्याची किंमत
+    {% elif CURRENT_LANGUAGE == 'hi' %}कुल स्टॉक मूल्य
+    {% else %}Total Stock Value{% endif %}
+    : ₹{{ total_value|floatformat:2 }}
+</h3>
+
+<hr>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}व्यवस्थापन पर्याय
+    {% elif CURRENT_LANGUAGE == 'hi' %}प्रबंधन विकल्प
+    {% else %}Inventory Actions{% endif %}
+</h3>
+
+<a href="{% url 'add_inventory' %}">
+    ➕ {% if CURRENT_LANGUAGE == 'mr' %}नवीन सामान जोडा
+    {% elif CURRENT_LANGUAGE == 'hi' %}नया सामान जोड़ें
+    {% else %}Add New Inventory{% endif %}
+</a>
+
+<br><br>
+
+<a href="{% url 'add_inventory_usage' %}">
+    📦 {% if CURRENT_LANGUAGE == 'mr' %}सामान वापराची नोंद करा
+    {% elif CURRENT_LANGUAGE == 'hi' %}सामान के उपयोग की जानकारी जोड़ें
+    {% else %}Record Item Usage{% endif %}
+</a>
+
+<br><br>
+
+<a href="{% url 'usage_history' %}">
+    📋 {% if CURRENT_LANGUAGE == 'mr' %}वापराचा इतिहास पहा
+    {% elif CURRENT_LANGUAGE == 'hi' %}उपयोग का इतिहास देखें
+    {% else %}View Usage History{% endif %}
+</a>
+
+<br><br>
+
+<a href="{% url 'inventory_reports' %}">
+    📊 {% if CURRENT_LANGUAGE == 'mr' %}साठा अहवाल पहा
+    {% elif CURRENT_LANGUAGE == 'hi' %}इन्वेंटरी रिपोर्ट देखें
+    {% else %}View Inventory Reports{% endif %}
+</a>
+
+<hr>
+
+<h3>
+    ⚠️ {% if CURRENT_LANGUAGE == 'mr' %}कमी साठ्याचा इशारा
+    {% elif CURRENT_LANGUAGE == 'hi' %}कम स्टॉक अलर्ट
+    {% else %}Low Stock Alerts{% endif %}
+</h3>
+
+{% if low_stock_items %}
+    {% for item in low_stock_items %}
+        <p>
+            ⚠️ <strong>{{ item.item_name }}</strong> -
+            {{ item.quantity }} {{ item.unit }}
+
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                (साठा कमी आहे)
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                (स्टॉक कम है)
+            {% else %}
+                (Low Stock)
+            {% endif %}
+        </p>
+    {% endfor %}
+{% else %}
+    <p>
+        {% if CURRENT_LANGUAGE == 'mr' %}सध्या कोणत्याही वस्तूचा साठा कमी नाही.
+        {% elif CURRENT_LANGUAGE == 'hi' %}फिलहाल किसी सामान का स्टॉक कम नहीं है।
+        {% else %}No low stock alerts. All inventory levels are sufficient.{% endif %}
+    </p>
+{% endif %}
+
+<hr>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}सर्व उपलब्ध सामान
+    {% elif CURRENT_LANGUAGE == 'hi' %}सभी उपलब्ध सामान
+    {% else %}All Inventory Items{% endif %}
+</h3>
+
+{% if items %}
+<table border="1" cellpadding="10" cellspacing="0">
+    <tr>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}सामानाचे नाव{% elif CURRENT_LANGUAGE == 'hi' %}सामान का नाम{% else %}Item Name{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}प्रकार{% elif CURRENT_LANGUAGE == 'hi' %}श्रेणी{% else %}Category{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}प्रमाण{% elif CURRENT_LANGUAGE == 'hi' %}मात्रा{% else %}Quantity{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}युनिट{% elif CURRENT_LANGUAGE == 'hi' %}इकाई{% else %}Unit{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}खरेदी किंमत{% elif CURRENT_LANGUAGE == 'hi' %}खरीद मूल्य{% else %}Purchase Price{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}खरेदी तारीख{% elif CURRENT_LANGUAGE == 'hi' %}खरीद तारीख{% else %}Purchase Date{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}कृती{% elif CURRENT_LANGUAGE == 'hi' %}कार्यवाही{% else %}Actions{% endif %}</th>
+    </tr>
+
+    {% for item in items %}
+    <tr>
+        <td>{{ item.item_name }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.unit }}</td>
+        <td>₹{{ item.purchase_price }}</td>
+        <td>{{ item.purchase_date }}</td>
+        <td>
+            <a href="{% url 'edit_inventory' item.id %}">
+                {% if CURRENT_LANGUAGE == 'mr' %}संपादित करा
+                {% elif CURRENT_LANGUAGE == 'hi' %}संपादित करें
+                {% else %}Edit{% endif %}
+            </a>
+            |
+            <a href="{% url 'delete_inventory' item.id %}">
+                {% if CURRENT_LANGUAGE == 'mr' %}हटवा
+                {% elif CURRENT_LANGUAGE == 'hi' %}हटाएं
+                {% else %}Delete{% endif %}
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+<p>
+    {% if CURRENT_LANGUAGE == 'mr' %}अजून कोणतेही सामान जोडलेले नाही.
+    {% elif CURRENT_LANGUAGE == 'hi' %}अभी तक कोई सामान नहीं जोड़ा गया है।
+    {% else %}No inventory items added yet.{% endif %}
+</p>
+{% endif %}
+
+<hr>
+
+<a href="{% url 'dashboard' %}">
+    🏠 {% if CURRENT_LANGUAGE == 'mr' %}मुख्य डॅशबोर्डवर परत जा
+    {% elif CURRENT_LANGUAGE == 'hi' %}मुख्य डैशबोर्ड पर वापस जाएं
+    {% else %}Back to Main Dashboard{% endif %}
+</a>
+
+{% endblock %}

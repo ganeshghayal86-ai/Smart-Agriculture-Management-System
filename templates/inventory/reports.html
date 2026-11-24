@@ -1,0 +1,125 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Inventory Reports{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<h2>
+    {% if CURRENT_LANGUAGE == 'mr' %}साठा अहवाल
+    {% elif CURRENT_LANGUAGE == 'hi' %}इन्वेंटरी रिपोर्ट
+    {% else %}Inventory Reports{% endif %}
+</h2>
+
+<hr>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}एकूण वस्तू
+    {% elif CURRENT_LANGUAGE == 'hi' %}कुल सामान
+    {% else %}Total Inventory Items{% endif %}
+    : {{ total_items }}
+</h3>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}सध्याच्या साठ्याची एकूण किंमत
+    {% elif CURRENT_LANGUAGE == 'hi' %}वर्तमान स्टॉक का कुल मूल्य
+    {% else %}Total Remaining Stock Value{% endif %}
+    : ₹{{ total_stock_value|floatformat:2 }}
+</h3>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}वापरलेले एकूण प्रमाण
+    {% elif CURRENT_LANGUAGE == 'hi' %}कुल उपयोग की गई मात्रा
+    {% else %}Total Quantity Used{% endif %}
+    : {{ total_quantity_used|floatformat:2 }}
+</h3>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}सध्याच्या साठ्यावर आधारित मूल्य
+    {% elif CURRENT_LANGUAGE == 'hi' %}वर्तमान स्टॉक पर आधारित मूल्य
+    {% else %}Current Stock Value{% endif %}
+    : ₹{{ total_purchase_value|floatformat:2 }}
+</h3>
+
+<hr>
+
+<a href="{% url 'download_inventory_pdf' %}">
+    📥
+    {% if CURRENT_LANGUAGE == 'mr' %}PDF अहवाल डाउनलोड करा
+    {% elif CURRENT_LANGUAGE == 'hi' %}PDF रिपोर्ट डाउनलोड करें
+    {% else %}Download PDF Report{% endif %}
+</a>
+
+<hr>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}वस्तूनुसार साठा अहवाल
+    {% elif CURRENT_LANGUAGE == 'hi' %}सामान के अनुसार स्टॉक रिपोर्ट
+    {% else %}Item-wise Stock Report{% endif %}
+</h3>
+
+{% if items %}
+<table border="1" cellpadding="10" cellspacing="0">
+    <tr>
+        <th>Item Name</th>
+        <th>Category</th>
+        <th>Remaining Quantity</th>
+        <th>Unit</th>
+        <th>Price per Unit</th>
+        <th>Stock Value</th>
+    </tr>
+
+    {% for item in items %}
+    <tr>
+        <td>{{ item.item_name }}</td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.unit }}</td>
+        <td>₹{{ item.purchase_price|floatformat:2 }}</td>
+        <td>₹{% widthratio item.quantity 1 item.purchase_price %}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No inventory records available.</p>
+{% endif %}
+
+<hr>
+
+<h3>
+    {% if CURRENT_LANGUAGE == 'mr' %}सामान वापराचा तपशील
+    {% elif CURRENT_LANGUAGE == 'hi' %}सामान उपयोग विवरण
+    {% else %}Inventory Usage Details{% endif %}
+</h3>
+
+{% if usages %}
+<table border="1" cellpadding="10" cellspacing="0">
+    <tr>
+        <th>Item</th>
+        <th>Quantity Used</th>
+        <th>Date</th>
+        <th>Purpose</th>
+    </tr>
+
+    {% for usage in usages %}
+    <tr>
+        <td>{{ usage.inventory.item_name }}</td>
+        <td>{{ usage.quantity_used }} {{ usage.inventory.unit }}</td>
+        <td>{{ usage.usage_date }}</td>
+        <td>{{ usage.purpose }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No usage records available.</p>
+{% endif %}
+
+<br>
+
+<a href="{% url 'inventory_dashboard' %}">
+    🏠 Back to Dashboard
+</a>
+
+{% endblock %}

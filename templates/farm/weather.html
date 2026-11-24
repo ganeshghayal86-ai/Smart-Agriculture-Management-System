@@ -1,0 +1,385 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Smart Weather & Irrigation System</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #edf5ed;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 35px auto;
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.09);
+        }
+
+        h1 {
+            text-align: center;
+            color: #216b35;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #267a35;
+            margin-top: 30px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 13px;
+            background: #267a35;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #195c27;
+        }
+
+        .weather-card {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #dff5e2, #eff9ff);
+            border-radius: 14px;
+            border: 1px solid #c9e3c7;
+        }
+
+        .weather-card h2 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .weather-item {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 7px rgba(0,0,0,0.05);
+        }
+
+        .weather-item h3 {
+            color: #267a35;
+            margin: 5px 0 12px;
+        }
+
+        .weather-item p {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .forecast-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .forecast-card {
+            background: #f3f9f2;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #c9e3c7;
+            text-align: center;
+        }
+
+        .forecast-card h3 {
+            color: #267a35;
+        }
+
+        .forecast-card p {
+            margin: 12px 0;
+            font-size: 15px;
+        }
+
+        .irrigation-card {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 14px;
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+        }
+
+        .irrigation-card h2 {
+            color: #1565c0;
+            margin-top: 0;
+        }
+
+        .irrigation-message {
+            background: white;
+            padding: 18px;
+            border-radius: 10px;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .rain-alert {
+            background: #fff3cd;
+            border-left: 5px solid #f0ad4e;
+        }
+
+        .dry-alert {
+            background: #e8f5e9;
+            border-left: 5px solid #43a047;
+        }
+
+        .advice-card {
+            margin-top: 25px;
+            padding: 22px;
+            background: #e8f5e9;
+            border-radius: 12px;
+            border: 1px solid #c8e6c9;
+        }
+
+        .advice-card h2 {
+            margin-top: 0;
+        }
+
+        .advice-card p {
+            line-height: 1.6;
+            margin: 12px 0;
+        }
+
+        .error {
+            color: #c62828;
+            background: #ffebee;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 30px;
+            color: #267a35;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back:hover {
+            text-decoration: underline;
+        }
+
+        @media(max-width: 600px) {
+            .container {
+                width: 94%;
+                padding: 18px;
+            }
+
+            h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌦️ Smart Weather & Irrigation System</h1>
+
+    <p class="subtitle">
+        Weather Forecast and Smart Farming Recommendations
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>📍 Enter City Name</label>
+
+        <input
+            type="text"
+            name="city"
+            placeholder="Example: Nashik, Pune, Mumbai"
+            required
+        >
+
+        <button type="submit">
+            🔍 Get Weather Information
+        </button>
+    </form>
+
+    {% if weather %}
+
+        <!-- Current Weather -->
+
+        <div class="weather-card">
+
+            <h2>📍 {{ weather.city }} - Current Weather</h2>
+
+            <div class="weather-grid">
+
+                <div class="weather-item">
+                    <h3>🌡️ Temperature</h3>
+                    <p>{{ weather.temperature }} °C</p>
+                </div>
+
+                <div class="weather-item">
+                    <h3>💧 Humidity</h3>
+                    <p>{{ weather.humidity }} %</p>
+                </div>
+
+                <div class="weather-item">
+                    <h3>🌧️ Current Rainfall</h3>
+                    <p>{{ weather.rainfall }} mm</p>
+                </div>
+
+                <div class="weather-item">
+                    <h3>🌤️ Condition</h3>
+                    <p>{{ weather.condition }}</p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Smart Irrigation Recommendation -->
+
+        {% if irrigation_advice %}
+
+            <div class="irrigation-card">
+
+                <h2>💧 Smart Irrigation Recommendation</h2>
+
+                <div class="irrigation-message
+                    {% if weather.rainfall > 0 %}
+                        rain-alert
+                    {% else %}
+                        dry-alert
+                    {% endif %}">
+
+                    <h3>🌱 Irrigation Advice</h3>
+
+                    <p>{{ irrigation_advice }}</p>
+
+                    <p>
+                        <strong>Note:</strong>
+                        Check actual soil moisture and crop requirements
+                        before deciding to irrigate.
+                    </p>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        <!-- 7 Days Forecast -->
+
+        <h2>📅 7 Days Weather Forecast</h2>
+
+        <div class="forecast-container">
+
+            {% for day in forecast %}
+
+                <div class="forecast-card">
+
+                    <h3>📅 {{ day.date }}</h3>
+
+                    <p>
+                        🌡️ <strong>Max Temperature:</strong><br>
+                        {{ day.max_temp }} °C
+                    </p>
+
+                    <p>
+                        ❄️ <strong>Min Temperature:</strong><br>
+                        {{ day.min_temp }} °C
+                    </p>
+
+                    <p>
+                        🌧️ <strong>Rainfall:</strong><br>
+                        {{ day.rainfall }} mm
+                    </p>
+
+                    <p>
+                        🌤️ <strong>Condition:</strong><br>
+                        {{ day.condition }}
+                    </p>
+
+                </div>
+
+            {% empty %}
+
+                <p>Forecast information is not available.</p>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+    <!-- Weather Error -->
+
+    {% if error %}
+        <p class="error">⚠️ {{ error }}</p>
+    {% endif %}
+
+    <!-- Farming Advice -->
+
+    {% if advice %}
+
+        <div class="advice-card">
+
+            <h2>🌱 Weather-based Farming Advice</h2>
+
+            {% for item in advice %}
+                <p>✅ {{ item }}</p>
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+    <a class="back" href="{% url 'dashboard' %}">
+        ← Back to Main Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

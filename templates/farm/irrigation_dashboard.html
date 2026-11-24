@@ -1,0 +1,453 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Irrigation Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    .irrigation-page {
+        padding: 20px;
+    }
+
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .summary-card {
+        padding: 20px;
+        border-radius: 12px;
+        background: #e8f5e9;
+        border-left: 5px solid #2e7d32;
+    }
+
+    .summary-card h3 {
+        margin: 0 0 10px;
+        color: #286b35;
+    }
+
+    .summary-card p {
+        font-size: 27px;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    .reminder-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .reminder-card {
+        padding: 20px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid #ddd;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+    }
+
+    .reminder-card h3 {
+        margin-top: 0;
+    }
+
+    .today-card {
+        border-left: 5px solid #1976d2;
+        background: #eaf4ff;
+    }
+
+    .upcoming-card {
+        border-left: 5px solid #f9a825;
+        background: #fff8e1;
+    }
+
+    .overdue-card {
+        border-left: 5px solid #d32f2f;
+        background: #ffebee;
+    }
+
+    .reminder-card p {
+        line-height: 1.6;
+    }
+
+    .empty-message {
+        color: #666;
+        font-style: italic;
+    }
+
+    .action-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .action-links a {
+        display: inline-block;
+        padding: 11px 16px;
+        background: #267a35;
+        color: white;
+        text-decoration: none;
+        border-radius: 7px;
+    }
+
+    .action-links a:hover {
+        background: #195c27;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+        margin-top: 20px;
+    }
+
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    .schedule-table th {
+        background: #267a35;
+        color: white;
+        padding: 12px;
+    }
+
+    .schedule-table td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    .schedule-table tr:nth-child(even) {
+        background: #f5f9f5;
+    }
+
+    .edit-link {
+        color: #1565c0;
+        font-weight: bold;
+    }
+
+    .delete-button {
+        background: #d32f2f;
+        color: white;
+        border: none;
+        padding: 7px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 8px;
+    }
+
+    .main-link {
+        display: inline-block;
+        margin-top: 25px;
+        color: #267a35;
+        text-decoration: none;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div class="irrigation-page">
+
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            💧 सिंचन व्यवस्थापन डॅशबोर्ड
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            💧 सिंचाई प्रबंधन डैशबोर्ड
+        {% else %}
+            💧 Irrigation Management Dashboard
+        {% endif %}
+    </h2>
+
+    <hr>
+
+    <!-- Summary Cards -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}एकूण वेळापत्रक
+                {% elif CURRENT_LANGUAGE == 'hi' %}कुल शेड्यूल
+                {% else %}Total Schedules{% endif %}
+            </h3>
+            <p>{{ total_schedules }}</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}पूर्ण झालेले
+                {% elif CURRENT_LANGUAGE == 'hi' %}पूर्ण हुए
+                {% else %}Completed{% endif %}
+            </h3>
+            <p>{{ completed }}</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}प्रलंबित
+                {% elif CURRENT_LANGUAGE == 'hi' %}लंबित
+                {% else %}Pending{% endif %}
+            </h3>
+            <p>{{ pending }}</p>
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- Automatic Irrigation Reminders -->
+
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}🔔 सिंचन स्मरणपत्रे
+        {% elif CURRENT_LANGUAGE == 'hi' %}🔔 सिंचाई रिमाइंडर
+        {% else %}🔔 Irrigation Reminders{% endif %}
+    </h2>
+
+    <div class="reminder-grid">
+
+        <!-- Today's Irrigation -->
+
+        <div class="reminder-card today-card">
+
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}📅 आजचे सिंचन
+                {% elif CURRENT_LANGUAGE == 'hi' %}📅 आज की सिंचाई
+                {% else %}📅 Today's Irrigation{% endif %}
+                ({{ today_schedules.count }})
+            </h3>
+
+            {% for item in today_schedules %}
+                <p>
+                    <strong>{{ item.crop.crop_name }}</strong><br>
+                    💧 {{ item.water_quantity }} {{ item.water_unit }}<br>
+                    {{ item.get_irrigation_method_display }}
+                </p>
+            {% empty %}
+                <p class="empty-message">
+                    {% if CURRENT_LANGUAGE == 'mr' %}
+                        आज कोणतेही सिंचन नियोजित नाही.
+                    {% elif CURRENT_LANGUAGE == 'hi' %}
+                        आज कोई सिंचाई निर्धारित नहीं है।
+                    {% else %}
+                        No irrigation scheduled for today.
+                    {% endif %}
+                </p>
+            {% endfor %}
+
+        </div>
+
+        <!-- Upcoming Irrigation -->
+
+        <div class="reminder-card upcoming-card">
+
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}⏰ आगामी सिंचन (3 दिवस)
+                {% elif CURRENT_LANGUAGE == 'hi' %}⏰ आगामी सिंचाई (3 दिन)
+                {% else %}⏰ Upcoming Irrigation (3 Days){% endif %}
+                ({{ upcoming_schedules.count }})
+            </h3>
+
+            {% for item in upcoming_schedules %}
+                <p>
+                    <strong>{{ item.crop.crop_name }}</strong><br>
+                    📅 {{ item.irrigation_date }}<br>
+                    💧 {{ item.water_quantity }} {{ item.water_unit }}
+                </p>
+            {% empty %}
+                <p class="empty-message">
+                    {% if CURRENT_LANGUAGE == 'mr' %}
+                        पुढील 3 दिवसांत सिंचन नियोजित नाही.
+                    {% elif CURRENT_LANGUAGE == 'hi' %}
+                        अगले 3 दिनों में सिंचाई निर्धारित नहीं है।
+                    {% else %}
+                        No upcoming irrigation in the next 3 days.
+                    {% endif %}
+                </p>
+            {% endfor %}
+
+        </div>
+
+        <!-- Overdue Irrigation -->
+
+        <div class="reminder-card overdue-card">
+
+            <h3>
+                {% if CURRENT_LANGUAGE == 'mr' %}⚠️ थकीत सिंचन
+                {% elif CURRENT_LANGUAGE == 'hi' %}⚠️ समय सीमा पार सिंचाई
+                {% else %}⚠️ Overdue Irrigation{% endif %}
+                ({{ overdue_schedules.count }})
+            </h3>
+
+            {% for item in overdue_schedules %}
+                <p>
+                    <strong>{{ item.crop.crop_name }}</strong><br>
+                    📅 {{ item.irrigation_date }}<br>
+                    💧 {{ item.water_quantity }} {{ item.water_unit }}
+                </p>
+            {% empty %}
+                <p class="empty-message">
+                    {% if CURRENT_LANGUAGE == 'mr' %}
+                        कोणतेही थकीत सिंचन नाही.
+                    {% elif CURRENT_LANGUAGE == 'hi' %}
+                        कोई सिंचाई लंबित नहीं है।
+                    {% else %}
+                        No overdue irrigation.
+                    {% endif %}
+                </p>
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <!-- Navigation -->
+
+    <div class="action-links">
+
+        <a href="{% url 'add_irrigation' %}">
+            ➕
+            {% if CURRENT_LANGUAGE == 'mr' %}सिंचन जोडा
+            {% elif CURRENT_LANGUAGE == 'hi' %}सिंचाई जोड़ें
+            {% else %}Add Irrigation Schedule{% endif %}
+        </a>
+
+        <a href="{% url 'irrigation_history' %}">
+            📋
+            {% if CURRENT_LANGUAGE == 'mr' %}सिंचन इतिहास
+            {% elif CURRENT_LANGUAGE == 'hi' %}सिंचाई इतिहास
+            {% else %}Irrigation History{% endif %}
+        </a>
+
+    </div>
+
+    <hr>
+
+    <!-- All Irrigation Schedules -->
+
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}📋 सर्व सिंचन वेळापत्रक
+        {% elif CURRENT_LANGUAGE == 'hi' %}📋 सभी सिंचाई शेड्यूल
+        {% else %}📋 All Irrigation Schedules{% endif %}
+    </h2>
+
+    {% if schedules %}
+
+        <div class="table-wrapper">
+
+            <table class="schedule-table">
+
+                <tr>
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}पीक
+                        {% elif CURRENT_LANGUAGE == 'hi' %}फसल
+                        {% else %}Crop{% endif %}
+                    </th>
+
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}तारीख
+                        {% elif CURRENT_LANGUAGE == 'hi' %}तारीख
+                        {% else %}Date{% endif %}
+                    </th>
+
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}पाण्याचे प्रमाण
+                        {% elif CURRENT_LANGUAGE == 'hi' %}पानी की मात्रा
+                        {% else %}Water Quantity{% endif %}
+                    </th>
+
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}पद्धत
+                        {% elif CURRENT_LANGUAGE == 'hi' %}तरीका
+                        {% else %}Method{% endif %}
+                    </th>
+
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}स्थिती
+                        {% elif CURRENT_LANGUAGE == 'hi' %}स्थिति
+                        {% else %}Status{% endif %}
+                    </th>
+
+                    <th>
+                        {% if CURRENT_LANGUAGE == 'mr' %}कृती
+                        {% elif CURRENT_LANGUAGE == 'hi' %}कार्रवाई
+                        {% else %}Actions{% endif %}
+                    </th>
+                </tr>
+
+                {% for schedule in schedules %}
+
+                <tr>
+                    <td>{{ schedule.crop.crop_name }}</td>
+
+                    <td>{{ schedule.irrigation_date }}</td>
+
+                    <td>
+                        {{ schedule.water_quantity }}
+                        {{ schedule.water_unit }}
+                    </td>
+
+                    <td>{{ schedule.get_irrigation_method_display }}</td>
+
+                    <td>{{ schedule.get_status_display }}</td>
+
+                    <td>
+                        <a class="edit-link"
+                           href="{% url 'edit_irrigation' schedule.id %}">
+                            ✏️
+                            {% if CURRENT_LANGUAGE == 'mr' %}संपादित करा
+                            {% elif CURRENT_LANGUAGE == 'hi' %}संपादित करें
+                            {% else %}Edit{% endif %}
+                        </a>
+
+                        <form method="POST"
+                              action="{% url 'delete_irrigation' schedule.id %}"
+                              onsubmit="return confirm('Are you sure you want to delete this schedule?');">
+
+                            {% csrf_token %}
+
+                            <button class="delete-button" type="submit">
+                                🗑️
+                                {% if CURRENT_LANGUAGE == 'mr' %}हटवा
+                                {% elif CURRENT_LANGUAGE == 'hi' %}हटाएं
+                                {% else %}Delete{% endif %}
+                            </button>
+
+                        </form>
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <p>
+            {% if CURRENT_LANGUAGE == 'mr' %}अद्याप सिंचन वेळापत्रक उपलब्ध नाही.
+            {% elif CURRENT_LANGUAGE == 'hi' %}अभी कोई सिंचाई शेड्यूल उपलब्ध नहीं है।
+            {% else %}No irrigation schedules available.{% endif %}
+        </p>
+
+    {% endif %}
+
+    <a class="main-link" href="{% url 'dashboard' %}">
+        🏠
+        {% if CURRENT_LANGUAGE == 'mr' %}मुख्य डॅशबोर्ड
+        {% elif CURRENT_LANGUAGE == 'hi' %}मुख्य डैशबोर्ड
+        {% else %}Main Dashboard{% endif %}
+    </a>
+
+</div>
+
+{% endblock %}

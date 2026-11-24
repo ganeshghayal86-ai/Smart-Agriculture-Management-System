@@ -1,0 +1,318 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Test Details | Smart Agriculture</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f3f7f2;
+            color: #26352b;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #176b3a, #42a66a);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            font-size: 27px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #e4f5e9;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 17px;
+            border-radius: 7px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: white;
+            color: #176b3a;
+        }
+
+        .edit-btn {
+            background: #e8f5eb;
+            color: #176b3a;
+        }
+
+        .pdf-btn {
+            background: #2879c7;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #dc4444;
+            color: white;
+        }
+
+        .section-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+        }
+
+        .section-card h2 {
+            color: #176b3a;
+            margin-bottom: 20px;
+            font-size: 21px;
+            border-bottom: 2px solid #e7f3e9;
+            padding-bottom: 12px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .info-item {
+            background: #f6faf6;
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 4px solid #42a66a;
+        }
+
+        .info-item span {
+            display: block;
+            color: #718075;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .info-item strong {
+            color: #26352b;
+            font-size: 16px;
+        }
+
+        .npk-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .npk-card {
+            padding: 23px;
+            border-radius: 10px;
+            text-align: center;
+            background: #edf7ef;
+        }
+
+        .npk-card h3 {
+            color: #176b3a;
+            margin-bottom: 12px;
+        }
+
+        .npk-card h2 {
+            border: none;
+            padding: 0;
+            margin: 0;
+            font-size: 27px;
+            color: #269653;
+        }
+
+        .npk-card p {
+            color: #718075;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .notes {
+            background: #f6faf6;
+            padding: 18px;
+            border-radius: 8px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .report-date {
+            color: #718075;
+            font-size: 13px;
+            margin-top: 18px;
+        }
+
+        .delete-section {
+            border-left: 5px solid #dc4444;
+        }
+
+        .delete-section h2 {
+            color: #c93636;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 15px;
+            }
+
+            .info-grid,
+            .npk-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 22px;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🌱 Soil Test Report Details</h1>
+        <p>Complete information about your soil health report.</p>
+
+        <div class="actions">
+            <a href="{% url 'soil_test_list' %}" class="btn back-btn">
+                ← Back to Reports
+            </a>
+
+            <a href="{% url 'edit_soil_test' test.id %}" class="btn edit-btn">
+                ✏️ Edit Report
+            </a>
+
+            <a href="{% url 'download_soil_test_pdf' test.id %}"
+               class="btn pdf-btn">
+                📄 Download PDF
+            </a>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <h2>👨‍🌾 Farmer Information</h2>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span>Farmer Name</span>
+                <strong>{{ test.farmer }}</strong>
+            </div>
+
+            <div class="info-item">
+                <span>Test Date</span>
+                <strong>{{ test.test_date }}</strong>
+            </div>
+
+            <div class="info-item">
+                <span>Location</span>
+                <strong>{{ test.location|default:"Not Available" }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <h2>🌾 Soil Information</h2>
+
+        <div class="info-grid">
+            <div class="info-item">
+                <span>Soil Type</span>
+                <strong>{{ test.soil_type }}</strong>
+            </div>
+
+            <div class="info-item">
+                <span>Soil pH</span>
+                <strong>{{ test.soil_ph }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <h2>🧪 NPK Nutrient Information</h2>
+
+        <div class="npk-grid">
+            <div class="npk-card">
+                <h3>Nitrogen (N)</h3>
+                <h2>{{ test.nitrogen }}</h2>
+                <p>Nitrogen Level</p>
+            </div>
+
+            <div class="npk-card">
+                <h3>Phosphorus (P)</h3>
+                <h2>{{ test.phosphorus }}</h2>
+                <p>Phosphorus Level</p>
+            </div>
+
+            <div class="npk-card">
+                <h3>Potassium (K)</h3>
+                <h2>{{ test.potassium }}</h2>
+                <p>Potassium Level</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-card">
+        <h2>📝 Additional Notes</h2>
+
+        <div class="notes">
+            {{ test.notes|default:"No Notes Available" }}
+        </div>
+
+        <p class="report-date">
+            Report Created: {{ test.created_at }}
+        </p>
+    </div>
+
+    <div class="section-card delete-section">
+        <h2>Delete Soil Test Report</h2>
+
+        <p style="margin-bottom: 18px; color: #718075;">
+            Deleting this report will permanently remove it.
+        </p>
+
+        <form method="POST"
+              action="{% url 'delete_soil_test' test.id %}"
+              onsubmit="return confirm('Are you sure you want to delete this Soil Test Report?');">
+
+            {% csrf_token %}
+
+            <button type="submit" class="btn delete-btn">
+                🗑️ Delete Report
+            </button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

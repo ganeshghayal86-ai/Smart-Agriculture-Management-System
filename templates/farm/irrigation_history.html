@@ -1,0 +1,55 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Irrigation History{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<h2>
+    {% if CURRENT_LANGUAGE == 'mr' %}सिंचन इतिहास
+    {% elif CURRENT_LANGUAGE == 'hi' %}सिंचाई इतिहास
+    {% else %}Irrigation History{% endif %}
+</h2>
+
+<hr>
+
+<a href="{% url 'irrigation_dashboard' %}">
+    🏠 Back to Irrigation Dashboard
+</a>
+
+<br><br>
+
+{% if schedules %}
+<table border="1" cellpadding="10" cellspacing="0">
+    <tr>
+        <th>Crop Name</th>
+        <th>Irrigation Date</th>
+        <th>Water Quantity</th>
+        <th>Method</th>
+        <th>Status</th>
+        <th>Notes</th>
+    </tr>
+
+    {% for schedule in schedules %}
+    <tr>
+        <td>{{ schedule.crop.crop_name }}</td>
+        <td>{{ schedule.irrigation_date }}</td>
+        <td>{{ schedule.water_quantity }} {{ schedule.water_unit }}</td>
+        <td>{{ schedule.get_irrigation_method_display }}</td>
+        <td>{{ schedule.get_status_display }}</td>
+        <td>{{ schedule.notes|default:"-" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+<p>
+    {% if CURRENT_LANGUAGE == 'mr' %}अजून कोणताही सिंचन रेकॉर्ड उपलब्ध नाही.
+    {% elif CURRENT_LANGUAGE == 'hi' %}अभी कोई सिंचाई रिकॉर्ड उपलब्ध नहीं है।
+    {% else %}No irrigation history available.{% endif %}
+</p>
+{% endif %}
+
+{% endblock %}

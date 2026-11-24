@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Disease History</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f1f8e9;
+            padding: 20px;
+        }
+
+        h2 {
+            color: green;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+
+        img {
+            width: 200px;
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        .result {
+            background: #e8f5e9;
+            padding: 12px;
+            border-radius: 8px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+
+<h2>🌱 Crop Disease History</h2>
+<form method="GET" style="text-align:center; margin:20px;">
+    <input
+        type="text"
+        name="search"
+        placeholder="Search crop name..."
+        value="{{ search }}"
+        style="padding:10px; width:220px;"
+    >
+
+    <button type="submit" style="padding:10px;">
+        Search
+    </button>
+</form>
+
+{% for item in history %}
+<div class="card">
+
+    <h3>Crop: {{ item.crop_name }}</h3>
+
+    <p>
+        <strong>Uploaded:</strong>
+        {{ item.uploaded_at }}
+    </p>
+
+    <img src="{{ item.leaf_image.url }}" alt="Crop Leaf">
+
+    <h3>AI Disease Analysis Result</h3>
+
+    <div class="result">{{ item.disease_name }}</div>
+    <form method="POST" action="{% url 'delete_disease_history' item.id %}">
+        {% csrf_token %}
+        <button type="submit"
+                onclick="return confirm('Are you sure you want to delete this record?')"
+                style="background:red; color:white; padding:10px; border:none; border-radius:5px;">
+            Delete
+        </button>
+    </form>
+
+</div>
+
+{% empty %}
+<div class="card">
+    <p>No disease history available.</p>
+</div>
+{% endfor %}
+
+</body>
+</html>

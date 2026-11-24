@@ -1,0 +1,132 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Add Irrigation Schedule{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<h2>
+    {% if CURRENT_LANGUAGE == 'mr' %}नवीन सिंचन वेळापत्रक जोडा
+    {% elif CURRENT_LANGUAGE == 'hi' %}नया सिंचाई शेड्यूल जोड़ें
+    {% else %}Add Irrigation Schedule{% endif %}
+</h2>
+
+<hr>
+
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+
+{% if crops %}
+<form method="POST">
+    {% csrf_token %}
+
+    <label>
+        {% if CURRENT_LANGUAGE == 'mr' %}पीक निवडा
+        {% elif CURRENT_LANGUAGE == 'hi' %}फसल चुनें
+        {% else %}Select Crop{% endif %}
+    </label>
+    <br>
+
+    <select name="crop" required>
+        <option value="">
+            {% if CURRENT_LANGUAGE == 'mr' %}पीक निवडा
+            {% elif CURRENT_LANGUAGE == 'hi' %}फसल चुनें
+            {% else %}Select Crop{% endif %}
+        </option>
+
+        {% for crop in crops %}
+        <option value="{{ crop.id }}">{{ crop.crop_name }}</option>
+        {% endfor %}
+    </select>
+
+    <br><br>
+
+    <label>
+        {% if CURRENT_LANGUAGE == 'mr' %}पाणी देण्याची तारीख
+        {% elif CURRENT_LANGUAGE == 'hi' %}सिंचाई की तारीख
+        {% else %}Irrigation Date{% endif %}
+    </label>
+    <br>
+    <input type="date" name="irrigation_date" required>
+
+    <br><br>
+
+    <label>
+        {% if CURRENT_LANGUAGE == 'mr' %}पाण्याचे प्रमाण
+        {% elif CURRENT_LANGUAGE == 'hi' %}पानी की मात्रा
+        {% else %}Water Quantity{% endif %}
+    </label>
+    <br>
+    <input type="number" name="water_quantity"
+           step="0.01" min="0.01" required>
+
+    <br><br>
+
+    <label>
+        {% if CURRENT_LANGUAGE == 'mr' %}पाण्याचे एकक
+        {% elif CURRENT_LANGUAGE == 'hi' %}पानी की इकाई
+        {% else %}Water Unit{% endif %}
+    </label>
+    <br>
+    <select name="water_unit" required>
+        <option value="Liters">Liters</option>
+        <option value="Cubic Meters">Cubic Meters</option>
+    </select>
+
+    <br><br>
+
+    <label>
+        {% if CURRENT_LANGUAGE == 'mr' %}सिंचन पद्धत
+        {% elif CURRENT_LANGUAGE == 'hi' %}सिंचाई का तरीका
+        {% else %}Irrigation Method{% endif %}
+    </label>
+    <br>
+
+    <select name="irrigation_method" required>
+        <option value="Drip">Drip Irrigation</option>
+        <option value="Sprinkler">Sprinkler Irrigation</option>
+        <option value="Flood">Flood Irrigation</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <br><br>
+
+    <label>
+        {% if CURRENT_LANGUAGE == 'mr' %}अतिरिक्त माहिती
+        {% elif CURRENT_LANGUAGE == 'hi' %}अतिरिक्त जानकारी
+        {% else %}Additional Notes{% endif %}
+    </label>
+    <br>
+    <textarea name="notes" rows="4"></textarea>
+
+    <br><br>
+
+    <button type="submit">
+        {% if CURRENT_LANGUAGE == 'mr' %}वेळापत्रक जतन करा
+        {% elif CURRENT_LANGUAGE == 'hi' %}शेड्यूल सेव करें
+        {% else %}Save Schedule{% endif %}
+    </button>
+</form>
+
+{% else %}
+<p>
+    {% if CURRENT_LANGUAGE == 'mr' %}
+        आधी Crop Management मध्ये पीक जोडा.
+    {% elif CURRENT_LANGUAGE == 'hi' %}
+        पहले Crop Management में फसल जोड़ें।
+    {% else %}
+        Please add a crop first in Crop Management.
+    {% endif %}
+</p>
+{% endif %}
+
+<br>
+
+<a href="{% url 'irrigation_dashboard' %}">
+    Back to Irrigation Dashboard
+</a>
+
+{% endblock %}

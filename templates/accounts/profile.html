@@ -1,0 +1,130 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Farmer Profile{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        background: white;
+        padding: 30px;
+        max-width: 600px;
+        margin: 20px auto;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px #00000012;
+    }
+
+    .profile-container h2 {
+        color: #166534;
+        margin-bottom: 20px;
+    }
+
+    .profile-info {
+        background: #f0f8f0;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 12px 0;
+        overflow-wrap: anywhere;
+    }
+
+    .profile-info b {
+        color: #166534;
+    }
+
+    .profile-actions a {
+        display: inline-block;
+        padding: 11px 18px;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        margin: 8px 5px 0 0;
+    }
+
+    .edit-btn { background: #16a34a; }
+    .password-btn { background: #2563eb; }
+    .back-btn { background: #64748b; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div class="profile-container">
+
+    {% if CURRENT_LANGUAGE == 'mr' %}
+        <h2>🌱 शेतकरी प्रोफाइल</h2>
+    {% elif CURRENT_LANGUAGE == 'hi' %}
+        <h2>🌱 किसान प्रोफाइल</h2>
+    {% else %}
+        <h2>🌱 Farmer Profile</h2>
+    {% endif %}
+
+    <hr>
+
+    <div class="profile-info">
+        <b>
+            {% if CURRENT_LANGUAGE == 'mr' %}वापरकर्ता नाव:
+            {% elif CURRENT_LANGUAGE == 'hi' %}उपयोगकर्ता नाम:
+            {% else %}Username:{% endif %}
+        </b>
+        {{ user.username }}
+    </div>
+
+    <div class="profile-info">
+        <b>
+            {% if CURRENT_LANGUAGE == 'mr' %}पहिले नाव:
+            {% elif CURRENT_LANGUAGE == 'hi' %}पहला नाम:
+            {% else %}First Name:{% endif %}
+        </b>
+        {{ user.first_name }}
+    </div>
+
+    <div class="profile-info">
+        <b>
+            {% if CURRENT_LANGUAGE == 'mr' %}आडनाव:
+            {% elif CURRENT_LANGUAGE == 'hi' %}उपनाम:
+            {% else %}Last Name:{% endif %}
+        </b>
+        {{ user.last_name }}
+    </div>
+
+    <div class="profile-info">
+        <b>
+            {% if CURRENT_LANGUAGE == 'mr' %}ईमेल:
+            {% elif CURRENT_LANGUAGE == 'hi' %}ईमेल:
+            {% else %}Email:{% endif %}
+        </b>
+        {{ user.email }}
+    </div>
+
+    <hr>
+
+    <div class="profile-actions">
+
+        <a href="{% url 'edit_profile' %}" class="edit-btn">
+            {% if CURRENT_LANGUAGE == 'mr' %}✏️ प्रोफाइल बदला
+            {% elif CURRENT_LANGUAGE == 'hi' %}✏️ प्रोफाइल बदलें
+            {% else %}✏️ Edit Profile{% endif %}
+        </a>
+
+        <a href="{% url 'change_password' %}" class="password-btn">
+            {% if CURRENT_LANGUAGE == 'mr' %}🔐 पासवर्ड बदला
+            {% elif CURRENT_LANGUAGE == 'hi' %}🔐 पासवर्ड बदलें
+            {% else %}🔐 Change Password{% endif %}
+        </a>
+
+        <br>
+
+        <a href="{% url 'dashboard' %}" class="back-btn">
+            {% if CURRENT_LANGUAGE == 'mr' %}डॅशबोर्डवर परत जा
+            {% elif CURRENT_LANGUAGE == 'hi' %}डैशबोर्ड पर वापस जाएं
+            {% else %}Back to Dashboard{% endif %}
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

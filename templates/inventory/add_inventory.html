@@ -1,0 +1,155 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Add Inventory Item{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div class="container">
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            नवीन वस्तू जोडा
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            नई वस्तु जोड़ें
+        {% else %}
+            Add Inventory Item
+        {% endif %}
+    </h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}वस्तूचे नाव:
+            {% elif CURRENT_LANGUAGE == 'hi' %}वस्तु का नाम:
+            {% else %}Item Name:{% endif %}
+        </label>
+        <input type="text" name="item_name" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}श्रेणी:
+            {% elif CURRENT_LANGUAGE == 'hi' %}श्रेणी:
+            {% else %}Category:{% endif %}
+        </label>
+
+        <select name="category" required>
+            <option value="">
+                {% if CURRENT_LANGUAGE == 'mr' %}श्रेणी निवडा
+                {% elif CURRENT_LANGUAGE == 'hi' %}श्रेणी चुनें
+                {% else %}Select Category{% endif %}
+            </option>
+            <option value="Seeds">
+                {% if CURRENT_LANGUAGE == 'mr' %}बियाणे
+                {% elif CURRENT_LANGUAGE == 'hi' %}बीज
+                {% else %}Seeds{% endif %}
+            </option>
+            <option value="Fertilizer">
+                {% if CURRENT_LANGUAGE == 'mr' %}खते
+                {% elif CURRENT_LANGUAGE == 'hi' %}उर्वरक
+                {% else %}Fertilizer{% endif %}
+            </option>
+            <option value="Pesticides">
+                {% if CURRENT_LANGUAGE == 'mr' %}कीटकनाशके
+                {% elif CURRENT_LANGUAGE == 'hi' %}कीटनाशक
+                {% else %}Pesticides{% endif %}
+            </option>
+            <option value="Equipment">
+                {% if CURRENT_LANGUAGE == 'mr' %}शेतीची उपकरणे
+                {% elif CURRENT_LANGUAGE == 'hi' %}कृषि उपकरण
+                {% else %}Equipment{% endif %}
+            </option>
+            <option value="Other">
+                {% if CURRENT_LANGUAGE == 'mr' %}इतर
+                {% elif CURRENT_LANGUAGE == 'hi' %}अन्य
+                {% else %}Other{% endif %}
+            </option>
+        </select>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}प्रमाण:
+            {% elif CURRENT_LANGUAGE == 'hi' %}मात्रा:
+            {% else %}Quantity:{% endif %}
+        </label>
+        <input type="number" name="quantity" step="0.01" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}एकक:
+            {% elif CURRENT_LANGUAGE == 'hi' %}इकाई:
+            {% else %}Unit:{% endif %}
+        </label>
+
+        <select name="unit" required>
+            <option value="">
+                {% if CURRENT_LANGUAGE == 'mr' %}एकक निवडा
+                {% elif CURRENT_LANGUAGE == 'hi' %}इकाई चुनें
+                {% else %}Select Unit{% endif %}
+            </option>
+            <option value="kg">
+                {% if CURRENT_LANGUAGE == 'mr' %}किलोग्रॅम
+                {% elif CURRENT_LANGUAGE == 'hi' %}किलोग्राम
+                {% else %}Kilogram{% endif %}
+            </option>
+            <option value="litre">
+                {% if CURRENT_LANGUAGE == 'mr' %}लिटर
+                {% elif CURRENT_LANGUAGE == 'hi' %}लीटर
+                {% else %}Litre{% endif %}
+            </option>
+            <option value="packet">
+                {% if CURRENT_LANGUAGE == 'mr' %}पॅकेट
+                {% elif CURRENT_LANGUAGE == 'hi' %}पैकेट
+                {% else %}Packet{% endif %}
+            </option>
+            <option value="piece">
+                {% if CURRENT_LANGUAGE == 'mr' %}नग
+                {% elif CURRENT_LANGUAGE == 'hi' %}टुकड़ा
+                {% else %}Piece{% endif %}
+            </option>
+        </select>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}खरेदी किंमत:
+            {% elif CURRENT_LANGUAGE == 'hi' %}खरीद मूल्य:
+            {% else %}Purchase Price:{% endif %}
+        </label>
+        <input type="number" name="purchase_price" step="0.01" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}खरेदी दिनांक:
+            {% elif CURRENT_LANGUAGE == 'hi' %}खरीद दिनांक:
+            {% else %}Purchase Date:{% endif %}
+        </label>
+        <input type="date" name="purchase_date" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}वर्णन:
+            {% elif CURRENT_LANGUAGE == 'hi' %}विवरण:
+            {% else %}Description:{% endif %}
+        </label>
+        <textarea name="description"></textarea>
+        <br><br>
+
+        <button type="submit">
+            {% if CURRENT_LANGUAGE == 'mr' %}वस्तू जतन करा
+            {% elif CURRENT_LANGUAGE == 'hi' %}वस्तु सेव करें
+            {% else %}Save Item{% endif %}
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'inventory_dashboard' %}">
+        {% if CURRENT_LANGUAGE == 'mr' %}इन्व्हेंटरी डॅशबोर्डवर परत जा
+        {% elif CURRENT_LANGUAGE == 'hi' %}इन्वेंटरी डैशबोर्ड पर वापस जाएं
+        {% else %}Back to Inventory Dashboard{% endif %}
+    </a>
+</div>
+{% endblock %}

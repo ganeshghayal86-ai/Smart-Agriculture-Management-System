@@ -1,0 +1,57 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Usage History{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<h2>
+    {% if CURRENT_LANGUAGE == 'mr' %}वापराचा इतिहास
+    {% elif CURRENT_LANGUAGE == 'hi' %}उपयोग का इतिहास
+    {% else %}Inventory Usage History{% endif %}
+</h2>
+
+<hr>
+
+<a href="{% url 'inventory_dashboard' %}">
+    {% if CURRENT_LANGUAGE == 'mr' %}डॅशबोर्डवर परत जा
+    {% elif CURRENT_LANGUAGE == 'hi' %}डैशबोर्ड पर वापस जाएं
+    {% else %}Back to Dashboard{% endif %}
+</a>
+
+<br><br>
+
+{% if usages %}
+<table border="1" cellpadding="10" cellspacing="0">
+    <tr>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}सामान{% elif CURRENT_LANGUAGE == 'hi' %}सामान{% else %}Item{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}वापरलेले प्रमाण{% elif CURRENT_LANGUAGE == 'hi' %}उपयोग की मात्रा{% else %}Quantity Used{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}युनिट{% elif CURRENT_LANGUAGE == 'hi' %}इकाई{% else %}Unit{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}तारीख{% elif CURRENT_LANGUAGE == 'hi' %}तारीख{% else %}Date{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}कारण{% elif CURRENT_LANGUAGE == 'hi' %}कारण{% else %}Purpose{% endif %}</th>
+        <th>{% if CURRENT_LANGUAGE == 'mr' %}वर्णन{% elif CURRENT_LANGUAGE == 'hi' %}विवरण{% else %}Description{% endif %}</th>
+    </tr>
+
+    {% for usage in usages %}
+    <tr>
+        <td>{{ usage.inventory.item_name }}</td>
+        <td>{{ usage.quantity_used }}</td>
+        <td>{{ usage.inventory.unit }}</td>
+        <td>{{ usage.usage_date }}</td>
+        <td>{{ usage.purpose }}</td>
+        <td>{{ usage.description|default:"-" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% else %}
+<p>
+    {% if CURRENT_LANGUAGE == 'mr' %}अजून कोणत्याही सामानाच्या वापराची नोंद नाही.
+    {% elif CURRENT_LANGUAGE == 'hi' %}अभी तक सामान के उपयोग का कोई रिकॉर्ड नहीं है।
+    {% else %}No inventory usage records found.{% endif %}
+</p>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crop Recommendation</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #eaf5e9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 75%;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #267a35;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 7px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: #267a35;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #195c27;
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            background: #eaf5e9;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #267a35;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f5faf4;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 20px;
+            color: #267a35;
+            text-decoration: none;
+        }
+
+        @media(max-width: 700px) {
+            .container {
+                width: 90%;
+                box-sizing: border-box;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 7px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌱 Crop Recommendation System</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Soil Type</label>
+        <select name="soil_type" required>
+            <option value="">Select Soil</option>
+            <option value="Black">Black Soil</option>
+            <option value="Red">Red Soil</option>
+        </select>
+
+        <label>Season</label>
+        <select name="season" required>
+            <option value="">Select Season</option>
+            <option value="Kharif">Kharif</option>
+            <option value="Rabi">Rabi</option>
+            <option value="Summer">Summer</option>
+        </select>
+
+        <label>Available Water</label>
+        <select name="water" required>
+            <option value="">Select Water Availability</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+
+        <label>Land Area (in Acres)</label>
+        <input
+            type="number"
+            name="land_area"
+            step="0.01"
+            min="0.01"
+            placeholder="Enter land area"
+            required
+        >
+
+        <button type="submit">Recommend Crops</button>
+    </form>
+
+    {% if recommendations %}
+
+        <div class="result">
+
+            <h3>Recommended Crops:</h3>
+
+            <p>
+                <strong>Land Area:</strong>
+                {{ land_area }} Acres
+            </p>
+
+            <table>
+                <tr>
+                    <th>Crop Name</th>
+                    <th>Growing Season</th>
+                    <th>Water Requirement</th>
+                    <th>Suitable Soil</th>
+                </tr>
+
+                {% for crop in crop_details %}
+                    <tr>
+                        <td>{{ crop.name }}</td>
+                        <td>{{ crop.season }}</td>
+                        <td>{{ crop.water }}</td>
+                        <td>{{ crop.soil }}</td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    {% endif %}
+
+    <a class="back" href="{% url 'dashboard' %}">
+        ← Back to Main Dashboard
+    </a>
+
+</div>
+
+</body>
+</html>

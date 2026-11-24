@@ -1,0 +1,149 @@
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Inventory Usage{% endblock %}
+
+{% block content %}
+
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div style="max-width:650px; margin:20px auto; background:white; padding:25px; border-radius:12px; box-shadow:0 3px 12px #0002;">
+
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            📦 वस्तू वापराची नोंद
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            📦 वस्तु उपयोग की जानकारी
+        {% else %}
+            📦 Inventory Usage Tracking
+        {% endif %}
+    </h2>
+
+    <p>
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            शेतीमध्ये वापरलेल्या वस्तूंची माहिती भरा.
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            खेती में उपयोग की गई वस्तुओं की जानकारी भरें।
+        {% else %}
+            Enter the details of items used in farming.
+        {% endif %}
+    </p>
+
+    <hr>
+
+    {% if error %}
+        <div style="background:#fee2e2; color:#991b1b; padding:12px; border-radius:6px; margin:15px 0;">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}वस्तू निवडा:
+            {% elif CURRENT_LANGUAGE == 'hi' %}वस्तु चुनें:
+            {% else %}Select Item:{% endif %}
+        </label>
+
+        <select name="inventory" required style="width:100%; padding:10px;">
+            <option value="">
+                {% if CURRENT_LANGUAGE == 'mr' %}वस्तू निवडा
+                {% elif CURRENT_LANGUAGE == 'hi' %}वस्तु चुनें
+                {% else %}Select Item{% endif %}
+            </option>
+
+            {% for item in items %}
+                <option value="{{ item.id }}">
+                    {{ item.item_name }} ({{ item.quantity }} {{ item.unit }} available)
+                </option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}वापरलेले प्रमाण:
+            {% elif CURRENT_LANGUAGE == 'hi' %}उपयोग की गई मात्रा:
+            {% else %}Quantity Used:{% endif %}
+        </label>
+
+        <input type="number"
+               name="quantity_used"
+               step="0.01"
+               min="0.01"
+               required
+               style="width:100%; padding:10px;">
+
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}वापराची तारीख:
+            {% elif CURRENT_LANGUAGE == 'hi' %}उपयोग की तारीख:
+            {% else %}Usage Date:{% endif %}
+        </label>
+
+        <input type="date"
+               name="usage_date"
+               required
+               style="width:100%; padding:10px;">
+
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}वापराचा उद्देश:
+            {% elif CURRENT_LANGUAGE == 'hi' %}उपयोग का उद्देश्य:
+            {% else %}Purpose of Usage:{% endif %}
+        </label>
+
+        <input type="text"
+               name="purpose"
+               required
+               placeholder="{% if CURRENT_LANGUAGE == 'mr' %}उदा. टोमॅटो पिकासाठी{% elif CURRENT_LANGUAGE == 'hi' %}जैसे टमाटर की फसल के लिए{% else %}e.g. For tomato crop{% endif %}"
+               style="width:100%; padding:10px;">
+
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}अधिक माहिती:
+            {% elif CURRENT_LANGUAGE == 'hi' %}अतिरिक्त जानकारी:
+            {% else %}Description:{% endif %}
+        </label>
+
+        <textarea name="description"
+                  rows="4"
+                  style="width:100%; padding:10px;"></textarea>
+
+        <br><br>
+
+        <button type="submit"
+                style="background:#166534; color:white; padding:12px 20px; border:none; border-radius:6px; cursor:pointer;">
+
+            {% if CURRENT_LANGUAGE == 'mr' %}
+                वापराची नोंद जतन करा
+            {% elif CURRENT_LANGUAGE == 'hi' %}
+                उपयोग की जानकारी सेव करें
+            {% else %}
+                Save Usage
+            {% endif %}
+
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'inventory_dashboard' %}">
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            इन्व्हेंटरी डॅशबोर्डवर परत जा
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            इन्वेंटरी डैशबोर्ड पर वापस जाएं
+        {% else %}
+            Back to Inventory Dashboard
+        {% endif %}
+    </a>
+
+</div>
+
+{% endblock %}

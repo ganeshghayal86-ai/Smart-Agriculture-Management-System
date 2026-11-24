@@ -1,0 +1,112 @@
+
+
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}Edit Inventory{% endblock %}
+
+{% block content %}
+{% get_current_language as CURRENT_LANGUAGE %}
+
+<div class="container">
+
+    <h2>
+        {% if CURRENT_LANGUAGE == 'mr' %}
+            वस्तू संपादित करा
+        {% elif CURRENT_LANGUAGE == 'hi' %}
+            वस्तु संपादित करें
+        {% else %}
+            Edit Inventory Item
+        {% endif %}
+    </h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}वस्तूचे नाव:
+            {% elif CURRENT_LANGUAGE == 'hi' %}वस्तु का नाम:
+            {% else %}Item Name:{% endif %}
+        </label>
+
+        <input type="text" name="item_name"
+               value="{{ item.item_name }}" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}श्रेणी:
+            {% elif CURRENT_LANGUAGE == 'hi' %}श्रेणी:
+            {% else %}Category:{% endif %}
+        </label>
+
+        <input type="text" name="category"
+               value="{{ item.category }}" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}प्रमाण:
+            {% elif CURRENT_LANGUAGE == 'hi' %}मात्रा:
+            {% else %}Quantity:{% endif %}
+        </label>
+
+        <input type="number" name="quantity"
+               value="{{ item.quantity }}" step="0.01" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}एकक:
+            {% elif CURRENT_LANGUAGE == 'hi' %}इकाई:
+            {% else %}Unit:{% endif %}
+        </label>
+
+        <input type="text" name="unit"
+               value="{{ item.unit }}" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}खरेदी किंमत:
+            {% elif CURRENT_LANGUAGE == 'hi' %}खरीद मूल्य:
+            {% else %}Purchase Price:{% endif %}
+        </label>
+
+        <input type="number" name="purchase_price"
+               value="{{ item.purchase_price }}" step="0.01" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}खरेदी दिनांक:
+            {% elif CURRENT_LANGUAGE == 'hi' %}खरीद दिनांक:
+            {% else %}Purchase Date:{% endif %}
+        </label>
+
+        <input type="date" name="purchase_date"
+               value="{{ item.purchase_date|date:'Y-m-d' }}" required>
+        <br><br>
+
+        <label>
+            {% if CURRENT_LANGUAGE == 'mr' %}वर्णन:
+            {% elif CURRENT_LANGUAGE == 'hi' %}विवरण:
+            {% else %}Description:{% endif %}
+        </label>
+
+        <textarea name="description">{{ item.description }}</textarea>
+        <br><br>
+
+        <button type="submit">
+            {% if CURRENT_LANGUAGE == 'mr' %}बदल जतन करा
+            {% elif CURRENT_LANGUAGE == 'hi' %}बदल सेव करें
+            {% else %}Update Item{% endif %}
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="{% url 'inventory_dashboard' %}">
+        {% if CURRENT_LANGUAGE == 'mr' %}इन्व्हेंटरीकडे परत जा
+        {% elif CURRENT_LANGUAGE == 'hi' %}इन्वेंटरी पर वापस जाएं
+        {% else %}Back to Inventory{% endif %}
+    </a>
+
+</div>
+{% endblock %}

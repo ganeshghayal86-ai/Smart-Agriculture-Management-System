@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Inventory</title>
+</head>
+<body>
+    <h2>Delete Inventory Item</h2>
+
+    <p>Are you sure you want to delete "{{ item.item_name }}"?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Yes, Delete</button>
+    </form>
+
+    <br>
+
+    <a href="{% url 'inventory_dashboard' %}">
+        <button type="button">Cancel</button>
+    </a>
+</body>
+</html>
