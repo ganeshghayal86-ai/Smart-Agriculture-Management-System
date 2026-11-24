@@ -73,3 +73,6 @@ pip install -r requirements.txt
 Create a `.env` file and configure the required Django and Gemini API credentials.
 
 Never upload your actual API keys
+## Project Screenshot
+
+![Home Page](screenshots/home.png)
