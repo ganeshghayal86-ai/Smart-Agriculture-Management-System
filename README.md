@@ -73,6 +73,31 @@ pip install -r requirements.txt
 Create a `.env` file and configure the required Django and Gemini API credentials.
 
 Never upload your actual API keys
-## Project Screenshot
+## Project Screenshots
 
+### 1. Home Page
 ![Home Page](screenshots/home.png)
+
+### 2. Login Page
+![Login Page](screenshots/login.png)
+
+### 3. Crop Management
+![Crop Management](screenshots/crop-management.png)
+
+### 4. AI Disease Detection
+![AI Disease Detection](screenshots/disease-detection.png)
+
+### 5. Soil Health Management
+![Soil Health Management](screenshots/soil-health-management.png)
+
+### 6. Irrigation Management
+![Irrigation](screenshots/irrigation.png)
+
+### 7. Finance Management
+![Finance](screenshots/finance.png)
+
+### 8. Inventory Management
+![Inventory](screenshots/inventory.png)
+
+### 9. AI Assistant
+![AI Assistant](screenshots/ai-assistant.png)
