@@ -1,85 +1,184 @@
 
 import os
+
+import assemblyai as aai
+
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from groq import Groq
 
 load_dotenv(override=True)
 
+
+# GEMINI SETUP
 API_KEY = os.getenv("GEMINI_API_KEY")
 
-client = genai.Client(api_key=API_KEY)
+if not API_KEY:
+    raise ValueError("GEMINI_API_KEY is missing in .env file")
+
+client = genai.Client(
+    api_key=API_KEY,
+    http_options={"api_version": "v1beta"}
+)
 
 
-def ask_gemini(question):
+# GROQ SETUP
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY is missing in .env file")
+
+groq_client = Groq(api_key=GROQ_API_KEY)
+
+
+# ASSEMBLYAI SETUP
+ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")
+
+if not ASSEMBLYAI_API_KEY:
+    raise ValueError("ASSEMBLYAI_API_KEY is missing in .env file")
+
+aai.settings.api_key = ASSEMBLYAI_API_KEY
+
+
+MODEL = "gemini-3.5-flash-lite"
+
+
+# AI FARMING CHATBOT
+
+def ask_gemini(question, language="en"):
+
+    print("GROQ CHATBOT FUNCTION CALLED")
+    print("Selected Language:", language)
+
+    language_map = {
+        "mr": "Marathi (मराठी)",
+        "hi": "Hindi (हिंदी)",
+        "en": "English"
+    }
+
+    selected_language = language_map.get(language, "English")
+
     prompt = f"""
     You are an AI Farming Assistant.
 
-    Rules:
-    1. Answer only agriculture and farming-related questions.
-    2. If the question is not related to farming, politely say:
-       "Sorry, I can only answer agriculture and farming-related questions."
-    3. Detect the language of the user's question.
-    4. If the question is in Marathi, answer in Marathi.
-    5. If the question is in Hindi, answer in Hindi.
-    6. If the question is in English, answer in English.
-    7. Give simple, clear and helpful answers to farmers.
+    IMPORTANT LANGUAGE RULE:
+    Reply ONLY in {selected_language}.
+    Do not reply in any other language.
+    Use the correct native script for Marathi and Hindi.
 
-    User Question: {question}
+    Answer only agriculture-related questions.
+
+    If the question is unrelated to agriculture,
+    politely explain that you only answer farming questions.
+    Give simple and useful answers to farmers.
+
+    Question: {question}
     """
 
-    response = client.models.generate_content(
-        model="gemini-3.5-flash-lite",
-        contents=prompt
+    response = groq_client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        messages=[
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.5
     )
 
-    return response.text
+    return response.choices[0].message.content.strip()
 
 
 
+# VOICE TRANSCRIPTION - ASSEMBLYAI
+def transcribe_audio(audio_file, language):
+
+    audio_bytes = audio_file.read()
+
+    if not audio_bytes:
+        raise ValueError("Audio recording is empty")
+
+    language_codes = {
+        "mr-IN": "mr",
+        "hi-IN": "hi",
+        "en-IN": "en"
+    }
+
+    selected_language = language_codes.get(language, "mr")
+
+    config = aai.TranscriptionConfig(
+        speech_models=["assemblyai-stt-3-7"],
+        language_code=selected_language
+    )
+
+    transcriber = aai.Transcriber(config=config)
+
+    transcript = transcriber.transcribe(audio_bytes)
+
+    print("========== ASSEMBLYAI DEBUG ==========")
+    print("Audio Size:", len(audio_bytes))
+    print("Transcript ID:", transcript.id)
+    print("Status:", transcript.status)
+    print("Error:", transcript.error)
+    print("Model Used:", transcript.speech_model_used)
+    print("Text:", repr(transcript.text))
+    print("======================================")
+
+    if transcript.status == aai.TranscriptStatus.error:
+        raise RuntimeError(
+            f"AssemblyAI Error: {transcript.error}"
+        )
+
+    if not transcript.text or not transcript.text.strip():
+        raise ValueError(
+            f"Empty transcription. Status: {transcript.status}"
+        )
+
+    return transcript.text.strip()
+
+
+# AI PLANT DISEASE DETECTION
 def analyze_leaf_image(image_file, crop_name):
+
     image_bytes = image_file.read()
+
+    if not image_bytes:
+        raise ValueError("Uploaded image is empty")
+
+    mime_type = image_file.content_type or "image/jpeg"
 
     image_part = types.Part.from_bytes(
         data=image_bytes,
-        mime_type=image_file.content_type
+        mime_type=mime_type
     )
 
     prompt = f"""
-    You are an AI plant disease analysis assistant.
+    You are an AI Plant Disease Detection Assistant.
 
     Crop name: {crop_name}
 
-    Analyze the uploaded leaf image.
+    Analyze the uploaded plant leaf image.
 
-    Provide the following information:
+    Give:
     1. Possible disease name.
     2. Visible symptoms.
-    3. Basic prevention suggestions.
-    4. When to consult an agriculture expert.
+    3. Prevention methods.
+    4. Suggested next steps.
+    5. When to consult an agriculture expert.
 
-    IMPORTANT:
-    Give the complete result in THREE languages.
+    Give results in:
+    English, Marathi and Hindi.
 
-    SECTION 1: ENGLISH
-    Explain all information in simple English.
+    If image is unclear, mention uncertainty.
 
-    SECTION 2: MARATHI
-    Explain the same information in simple Marathi.
-
-    SECTION 3: HINDI
-    Explain the same information in simple Hindi.
-
-    If the image is unclear or disease cannot be identified,
-    clearly mention that the result is uncertain in all languages.
-
-    Do not claim a confirmed diagnosis.
-    Do not suggest specific chemical pesticides or dosages.
+    Never claim a confirmed diagnosis.
+    Do not suggest chemical pesticide dosages.
     """
 
     response = client.models.generate_content(
-        model="gemini-3.5-flash-lite",
+        model=MODEL,
         contents=[prompt, image_part]
     )
 
-    return response.text
+    if not response.text:
+        raise ValueError("Disease analysis returned empty response")
+
+    return response.text.strip()
