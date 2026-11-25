@@ -41,7 +41,7 @@ if not ASSEMBLYAI_API_KEY:
 aai.settings.api_key = ASSEMBLYAI_API_KEY
 
 
-MODEL = "gemini-3.5-flash-lite"
+MODEL = "gemini-3.8-flash"
 
 
 # AI FARMING CHATBOT
